@@ -39,8 +39,15 @@ const Header: React.FC = () => {
           <div className="flex items-center justify-end gap-2 md:gap-4">
             <nav className="hidden lg:flex items-center gap-6 mr-2">
               <Link to="/" className="text-primary text-sm font-bold transition-colors">Trang chủ</Link>
-              <Link to="/" className="text-[#181411] text-sm font-medium hover:text-primary transition-colors">Sản phẩm</Link>
-              <Link to="/account/orders" className="text-[#181411] text-sm font-medium hover:text-primary transition-colors">Đơn hàng</Link>
+              <Link to="/products" className="text-[#181411] text-sm font-medium hover:text-primary transition-colors">Sản phẩm</Link>
+              <Link to="/favorites" className="text-[#181411] text-sm font-medium hover:text-primary transition-colors" title="Sản phẩm yêu thích">
+              Yêu thích
+            </Link>
+
+            {/* Lịch sử đơn hàng */}
+            <Link to="/orders" className="text-[#181411] text-sm font-medium hover:text-primary transition-colors" title="Đơn hàng">
+              Đơn hàng
+            </Link>
             </nav>
             <div className="flex items-center gap-3">
               <Link to="/cart" className="relative flex items-center justify-center rounded-full size-10 bg-transparent hover:bg-[#f4f2f0] text-[#181411] transition-colors">
@@ -110,8 +117,8 @@ const Header: React.FC = () => {
                 {[
                   { label: 'Tổng quan', icon: 'dashboard', path: '/account' },
                   { label: 'Thông tin tài khoản', icon: 'person', path: '/account/profile' },
-                  { label: 'Lịch sử đơn hàng', icon: 'history', path: '/account/orders' },
-                  { label: 'Sản phẩm yêu thích', icon: 'favorite', path: '/account/favorites' },
+                  // { label: 'Lịch sử đơn hàng', icon: 'history', path: '/account/orders' },
+                  // { label: 'Sản phẩm yêu thích', icon: 'favorite', path: '/account/favorites' },
                   { label: 'Quản lý địa chỉ', icon: 'location_on', path: '#' },
                   { label: 'Thông báo', icon: 'notifications', path: '#', badge: 3 },
                 ].map((item) => (

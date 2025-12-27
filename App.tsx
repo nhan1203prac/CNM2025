@@ -1,6 +1,6 @@
 
 import React, { useState, createContext, useContext, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Product, CartItem, User } from './types';
 import { MOCK_USER } from './data';
 import Header from './components/layout/Header';
@@ -15,6 +15,11 @@ import Dashboard from './pages/Account/Dashboard';
 import Profile from './pages/Account/Profile';
 import Orders from './pages/Account/Orders';
 import Favorites from './pages/Account/Favorites';
+import ProductList from './pages/ProductList';
+import Notifications from './pages/Account/Notifications';
+import Addresses from './pages/Account/Addresses';
+import OrdersPage from './pages/OrdersPage';
+import FavoritesPage from './pages/FavouritePage';
 
 // Contexts
 interface CartContextType {
@@ -98,15 +103,20 @@ const App: React.FC = () => {
           <Layout>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/products" element={<ProductList />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/orders" element={user ? <OrdersPage /> : <Navigate to="/login" />} />
+              <Route path="/favorites" element={user ? <FavoritesPage /> : <Navigate to="/login" />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/account" element={user ? <Dashboard /> : <Navigate to="/login" />} />
               <Route path="/account/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-              <Route path="/account/orders" element={user ? <Orders /> : <Navigate to="/login" />} />
-              <Route path="/account/favorites" element={user ? <Favorites /> : <Navigate to="/login" />} />
+              <Route path="/account/notification" element={user ? <Notifications /> : <Navigate to="/login" />} />
+              <Route path="/account/addresses" element={user ? <Addresses /> : <Navigate to="/login" />} />
+              {/* <Route path="/account/orders" element={user ? <Orders /> : <Navigate to="/login" />} />
+              <Route path="/account/favorites" element={user ? <Favorites /> : <Navigate to="/login" />} /> */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Layout>

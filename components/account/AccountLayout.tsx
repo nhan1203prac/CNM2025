@@ -16,8 +16,8 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
     { label: 'Thông tin tài khoản', icon: 'person', path: '/account/profile' },
     { label: 'Lịch sử đơn hàng', icon: 'history', path: '/account/orders' },
     { label: 'Sản phẩm yêu thích', icon: 'favorite', path: '/account/favorites' },
-    { label: 'Quản lý địa chỉ', icon: 'location_on', path: '#' },
-    { label: 'Thông báo', icon: 'notifications', path: '#', badge: 3 },
+    { label: 'Quản lý địa chỉ', icon: 'location_on', path: '/account/addresses' },
+    { label: 'Thông báo', icon: 'notifications', path: '/account/notification', badge: 3 },
   ];
 
   return (
