@@ -1,0 +1,9 @@
+
+{
+  "name": "ShopMới - Modern E-commerce Platform",
+  "description": "A comprehensive shopping experience with product listings, account management, cart, and checkout features, integrated with Gemini AI for smart shopping assistance.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
