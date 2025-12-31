@@ -1,12 +1,12 @@
+import React from "react";
 import { createContext, useContext, useState } from "react";
-import { User } from "../../types";
 import { MOCK_USER } from "../../data";
 
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext(undefined);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState<User | null>(MOCK_USER);
+  const [user, setUser] = useState(MOCK_USER);
 
   const login = () => setUser(MOCK_USER);
   const logout = () => setUser(null);

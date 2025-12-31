@@ -17,7 +17,7 @@ const Addresses = () => {
   ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState(null);
 
   const [formData, setFormData] = useState({
     name: 'Nguyễn Văn A',

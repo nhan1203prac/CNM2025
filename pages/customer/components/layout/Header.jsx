@@ -17,7 +17,7 @@ const Header = () => {
   const navigate = useNavigate()
 
   const [openUserMenu, setOpenUserMenu] = useState(false)
-  const userMenuRef = useRef<HTMLDivElement>(null)
+  const userMenuRef = useRef(null)
 
   useEffect(() => {
     const handleClickOutside = (e) => {
