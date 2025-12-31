@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { PRODUCTS } from '../data';
-import ProductCard from '../components/common/ProductCard';
+import { PRODUCTS } from '../../data';
+import ProductCard from './components/common/ProductCard';
 
 const ProductList: React.FC = () => {
   // State quản lý lọc đánh giá sao

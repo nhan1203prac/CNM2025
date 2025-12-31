@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
           <div className="flex gap-4 mt-4 md:mt-0">
             <span className="cursor-pointer hover:text-gray-600 transition-colors">Facebook</span>
             <span className="cursor-pointer hover:text-gray-600 transition-colors">Instagram</span>
-            <span class="cursor-pointer hover:text-gray-600 transition-colors">Twitter</span>
+            <span className="cursor-pointer hover:text-gray-600 transition-colors">Twitter</span>
           </div>
         </div>
       </div>

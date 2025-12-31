@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { PRODUCTS } from '../data';
-import { Product } from '../types';
-import { useCart } from '../App';
-import ProductCard from '../components/common/ProductCard';
+import { PRODUCTS } from '../../data';
+import { Product } from '../../types';
+import {useCart} from '../context/CartContext';
+import ProductCard from './components/common/ProductCard';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();

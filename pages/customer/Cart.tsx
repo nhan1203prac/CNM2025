@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../App';
-import { PRODUCTS } from '../data';
-import ProductCard from '../components/common/ProductCard';
+import { PRODUCTS } from '../../data';
+import { useCart } from '../context/CartContext';
+import ProductCard from './components/common/ProductCard';
 
 const Cart: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, subtotal } = useCart();

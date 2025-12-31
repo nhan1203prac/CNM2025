@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { PRODUCTS } from '../data';
-import ProductCard from '../components/common/ProductCard';
+import { PRODUCTS } from '../../data';
+import ProductCard from './components/common/ProductCard';
 
 const FavoritesPage: React.FC = () => {
   return (

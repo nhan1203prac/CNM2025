@@ -1,8 +1,8 @@
 
 import React from 'react';
-import AccountLayout from '../../components/account/AccountLayout';
-import { PRODUCTS } from '../../data';
-import ProductCard from '../../components/common/ProductCard';
+import AccountLayout from '../components/account/AccountLayout';
+import { PRODUCTS } from '../../../data';
+import ProductCard from '../components/common/ProductCard';
 
 const Favorites: React.FC = () => {
   return (

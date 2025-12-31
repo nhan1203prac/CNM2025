@@ -9,8 +9,8 @@ import {
   Package,
   Heart
 } from 'lucide-react'
-import { useCart, useAuth } from '../../App'
-
+import { useCart } from '../../../context/CartContext'
+import { useAuth } from '../../../context/AuthContext'
 const Header: React.FC = () => {
   const { cart } = useCart()
   const { user, logout } = useAuth()

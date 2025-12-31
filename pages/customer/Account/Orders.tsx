@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import AccountLayout from '../../components/account/AccountLayout';
-import { MOCK_ORDERS } from '../../data';
+import AccountLayout from '../components/account/AccountLayout';
+import { MOCK_ORDERS } from '../../../data';
 
 const Orders: React.FC = () => {
   const [activeTab, setActiveTab] = useState('Tất cả');

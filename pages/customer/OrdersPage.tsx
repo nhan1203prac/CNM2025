@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MOCK_ORDERS } from '../data';
+import { MOCK_ORDERS } from '../../data';
 
 const OrdersPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('Tất cả');

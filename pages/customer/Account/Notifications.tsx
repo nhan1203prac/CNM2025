@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AccountLayout from '../../components/account/AccountLayout';
+import AccountLayout from '../components/account/AccountLayout';
 
 interface Notification {
   id: string;

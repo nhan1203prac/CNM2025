@@ -29,11 +29,11 @@ export interface User {
   name: string;
   email: string;
   avatar: string;
-  tier: 'Bạc' | 'Vàng' | 'Kim Cương';
   username: string;
   phone: string;
   gender: 'Nam' | 'Nữ' | 'Khác';
   dob: string;
+  isAdmin: boolean;
 }
 
 export interface Order {

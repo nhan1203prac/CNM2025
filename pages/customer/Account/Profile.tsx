@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import AccountLayout from '../../components/account/AccountLayout';
-import { useAuth } from '../../App';
+import AccountLayout from '../components/account/AccountLayout';
+import { useAuth } from '../../context/AuthContext';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();

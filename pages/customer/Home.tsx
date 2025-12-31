@@ -1,7 +1,7 @@
 
 import React from 'react';
-import ProductCard from '../components/common/ProductCard';
-import { PRODUCTS } from '../data';
+import ProductCard from './components/common/ProductCard';
+import { PRODUCTS } from '../../data';
 
 const Home: React.FC = () => {
   return (

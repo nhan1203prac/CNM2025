@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../App';
+import { useCart } from '../context/CartContext';
 
 const Checkout: React.FC = () => {
   const { cart, subtotal, clearCart } = useCart();
