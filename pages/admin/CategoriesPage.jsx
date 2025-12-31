@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { CATEGORIES_LIST } from '../constants';
+import { CATEGORIES_LIST } from '../../constants';
 
 export const CategoriesPage= () => {
   const [showDrawer, setShowDrawer] = useState(false);

@@ -1,4 +1,4 @@
-
+import { OrderStatus, PaymentStatus, ShippingStatus, StockStatus, UserRole, UserStatus } from './type';
 export const RECENT_ORDERS = [
   {
     id: '#ORD-7829',

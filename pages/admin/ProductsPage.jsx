@@ -25,7 +25,7 @@ const StockBadge = ({ status }) => {
 
 export const ProductsPage = () => {
   const [showDrawer, setShowDrawer] = useState(false);
-  const [editMode, setEditMode] = useState<'create' | 'edit'>('create');
+  const [editMode, setEditMode] = useState('create');
   const [selectedProduct, setSelectedProduct] = useState({});
 
   const handleOpenDrawer = (mode, product) => {
