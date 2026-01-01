@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ShoppingCart,
   User,
@@ -7,37 +7,36 @@ import {
   ChevronDown,
   LogOut,
   Package,
-  Heart
-} from 'lucide-react'
-import { useCart } from '../../../context/CartContext'
-import { useAuth } from '../../../context/AuthContext'
+  Heart,
+} from "lucide-react";
+import { useCart } from "../../../context/CartContext";
+import { useAuth } from "../../../context/AuthContext";
 const Header = () => {
-  const { cart } = useCart()
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-
-  const [openUserMenu, setOpenUserMenu] = useState(false)
-  const userMenuRef = useRef(null)
+  const { cart } = useCart();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  console.log("user", user);
+  const [openUserMenu, setOpenUserMenu] = useState(false);
+  const userMenuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        userMenuRef.current &&
-        !userMenuRef.current.contains(e.target )
-      ) {
-        setOpenUserMenu(false)
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setOpenUserMenu(false);
       }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-[#f4f2f0] shadow-sm">
       <div className="px-4 lg:px-40 py-2">
-        {/* TOP */}
         <div className="flex items-center justify-between py-3 gap-4">
-          {/* LOGO */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="size-8 text-primary">
               <svg viewBox="0 0 48 48" fill="currentColor">
@@ -49,7 +48,6 @@ const Header = () => {
             </h2>
           </Link>
 
-          {/* SEARCH DESKTOP */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <div className="flex w-full items-center rounded-lg h-10 bg-[#f4f2f0] focus-within:ring-2 focus-within:ring-primary/50">
               <div className="pl-4 pr-2 text-[#897261]">
@@ -62,25 +60,50 @@ const Header = () => {
             </div>
           </div>
 
-          {/* RIGHT */}
           <div className="flex items-center gap-3 md:gap-4">
-            {/* NAV */}
             <nav className="hidden lg:flex items-center gap-6 mr-2">
-              <Link to="/" className="text-primary text-sm font-bold">
+              <Link
+                to="/"
+                className={`text-sm font-bold transition-colors ${
+                  isActive("/")
+                    ? "text-primary"
+                    : "text-gray-600 hover:text-primary"
+                }`}
+              >
                 Trang chủ
               </Link>
-              <Link to="/products" className="text-sm hover:text-primary">
+              <Link
+                to="/products"
+                className={`text-sm font-bold transition-colors ${
+                  isActive("/products")
+                    ? "text-primary"
+                    : "text-gray-600 hover:text-primary"
+                }`}
+              >
                 Sản phẩm
               </Link>
-              <Link to="/favorites" className="text-sm hover:text-primary">
+              <Link
+                to="/favorites"
+                className={`text-sm font-bold transition-colors ${
+                  isActive("/favorites")
+                    ? "text-primary"
+                    : "text-gray-600 hover:text-primary"
+                }`}
+              >
                 Yêu thích
               </Link>
-              <Link to="/orders" className="text-sm hover:text-primary">
+              <Link
+                to="/orders"
+                className={`text-sm font-bold transition-colors ${
+                  isActive("/orders")
+                    ? "text-primary"
+                    : "text-gray-600 hover:text-primary"
+                }`}
+              >
                 Đơn hàng
               </Link>
             </nav>
 
-            {/* CART */}
             <Link
               to="/cart"
               className="relative flex items-center justify-center size-10 rounded-full hover:bg-[#f4f2f0]"
@@ -93,23 +116,24 @@ const Header = () => {
               )}
             </Link>
 
-            {/* USER */}
             {user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
-                  onClick={() => setOpenUserMenu(v => !v)}
+                  onClick={() => setOpenUserMenu((v) => !v)}
                   className="hidden md:flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-[#f4f2f0]"
                 >
                   <img
-                    src={user.avatar}
+                    src={
+                      user?.profile?.avatar ||
+                      "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+                    }
                     alt="avatar"
                     className="size-8 rounded-full object-cover border"
                   />
-                  <span className="text-sm font-bold">{user.name}</span>
+                  <span className="text-sm font-bold">{user?.username}</span>
                   <ChevronDown size={16} />
                 </button>
 
-                {/* DROPDOWN */}
                 {openUserMenu && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50">
                     <Link
@@ -121,14 +145,12 @@ const Header = () => {
                       Tài khoản
                     </Link>
 
-                    
-
                     <div className="border-t">
                       <button
                         onClick={() => {
-                          logout()
-                          setOpenUserMenu(false)
-                          navigate('/login')
+                          logout();
+                          setOpenUserMenu(false);
+                          navigate("/login");
                         }}
                         className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50"
                       >
@@ -150,7 +172,6 @@ const Header = () => {
           </div>
         </div>
 
-        {/* SEARCH MOBILE */}
         <div className="flex md:hidden pb-3">
           <div className="flex w-full items-center rounded-lg h-10 bg-[#f4f2f0]">
             <div className="pl-4 pr-2 text-[#897261]">
@@ -164,7 +185,7 @@ const Header = () => {
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

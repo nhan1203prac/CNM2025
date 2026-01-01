@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './pages/context/AuthContext';
 import { CartProvider } from './pages/context/CartContext';
+import { Toaster } from 'react-hot-toast';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -15,7 +16,7 @@ root.render(
   <React.StrictMode>
     <AuthProvider>
     <CartProvider>
-      
+      <Toaster position="top-right" /> 
     <App />
     </CartProvider>
     </AuthProvider>
