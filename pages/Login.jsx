@@ -19,7 +19,9 @@ const Login = () => {
       localStorage.setItem("token", token);
       
       toast.success("Đăng nhập Google thành công!");
-      navigate("/");      
+     
+      navigate("/"); 
+      
       window.location.reload();
     }
   }, [searchParams, navigate]);
@@ -31,11 +33,11 @@ const Login = () => {
 
     try {
       const user = await login(email, password); 
-      
+      console.log("user login", user)
       toast.success(`Đăng nhập thành công!`);
       
       if (user.isAdmin) {
-        navigate('/admin/products');
+        navigate('/admin/dashboard');
       } 
       else if(!user.is_active) {
         toast.success("Tài khoản chưa xác thực, đang chuyển hướng...");

@@ -39,12 +39,12 @@ export const AuthProvider = ({ children }) => {
     const { access_token, user: userData } = response.data;
     localStorage.setItem("token", access_token);
     localStorage.setItem("user_info", JSON.stringify(userData));
-    // setUser(userData);
+    setUser(userData);
     return userData;
   } 
   const logout = () =>{
     localStorage.removeItem("token");
-    // setUser(null);
+    setUser(null);
   }
 
   const signup = async (userData) => {
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
     
     localStorage.setItem("token", access_token);
     localStorage.setItem("user_info", JSON.stringify(newUser));
-    // setUser(newUser);
+    setUser(newUser);
     
     return newUser;
   };

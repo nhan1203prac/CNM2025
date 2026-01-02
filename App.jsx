@@ -90,11 +90,12 @@ const AppContent = () => {
     return (
       <AdminLayout>
         <Routes>
-  <Route path="/admin/dashboard" element={<AdminDashboard />} />
-  <Route path="/admin/products" element={<ProductsPage />} />
-  <Route path="/admin/categories" element={<CategoriesPage />} />
-  <Route path="/admin/orders" element={<AdminOrdersPage />} />
-  <Route path="/admin/users" element={<UsersPage />} />
+  <Route path="/admin/dashboard" element={user?<AdminDashboard />: <Navigate to="/login" />} />
+  <Route path="/admin/products" element={user?<ProductsPage />: <Navigate to="/login" />} />
+  <Route path="/admin/categories" element={user?<CategoriesPage />: <Navigate to="/login" />} />
+  <Route path="/admin/orders" element={user?<AdminOrdersPage />: <Navigate to="/login" />} />
+  <Route path="/admin/users" element={user?<UsersPage />: <Navigate to="/login" />} />
+  <Route path="/admin/*" element={<Navigate to="/admin/dashboard" replace />} />
 </Routes>
 
       </AdminLayout>

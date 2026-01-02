@@ -1,14 +1,19 @@
-
 import React from 'react';
-import { RECENT_ORDERS } from '../../constants';
-import { OrderStatus } from '../../type';
 
-const StatusBadge= ({ status }) => {
+const StatusBadge = ({ status }) => {
   const getColors = () => {
-    switch(status) {
-      case OrderStatus.PROCESSING: return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500';
-      case OrderStatus.COMPLETED: return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500';
-      case OrderStatus.CANCELLED: return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500';
+    const s = status?.toLowerCase();
+    switch(s) {
+      case 'processing': 
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500';
+      case 'completed': 
+      case 'shipped':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500';
+      case 'cancelled': 
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500';
+      default:
+        return 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-400';
     }
   };
 
@@ -19,12 +24,12 @@ const StatusBadge= ({ status }) => {
   );
 };
 
-export const RecentOrders = () => {
+export const RecentOrders = ({ orders }) => {
   return (
     <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
       <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-surface-dark">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white">Đơn hàng gần đây</h3>
-        <a href="#" className="text-sm font-bold text-primary hover:text-primary-dark transition-colors">Xem tất cả</a>
+        <a href="/admin/orders" className="text-sm font-bold text-primary hover:text-primary-dark transition-colors">Xem tất cả</a>
       </div>
       
       <div className="overflow-x-auto scrollbar-hide">
@@ -41,12 +46,14 @@ export const RecentOrders = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-            {RECENT_ORDERS.map((order) => (
+            {orders?.map((order) => (
               <tr key={order.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors group">
-                <td className="px-6 py-4 font-bold text-slate-900 dark:text-white text-sm">{order.id}</td>
+                <td className="px-6 py-4 font-bold text-slate-900 dark:text-white text-sm">
+                  #{order.id.toString().slice(-6).toUpperCase()}
+                </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-black text-slate-600 dark:text-slate-300 ring-2 ring-primary/5">
+                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-xs font-black text-primary ring-2 ring-primary/5">
                       {order.customerInitials}
                     </div>
                     <div className="flex flex-col min-w-0">
@@ -58,7 +65,7 @@ export const RecentOrders = () => {
                 <td className="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm font-medium">{order.productName}</td>
                 <td className="px-6 py-4 text-slate-500 dark:text-slate-500 text-sm font-medium">{order.date}</td>
                 <td className="px-6 py-4 text-slate-900 dark:text-white font-bold text-sm">
-                  {order.total.toLocaleString('vi-VN')} ₫
+                  {order.total?.toLocaleString('vi-VN')} ₫
                 </td>
                 <td className="px-6 py-4">
                   <StatusBadge status={order.status} />
