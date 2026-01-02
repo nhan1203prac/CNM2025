@@ -101,7 +101,7 @@ const Checkout = () => {
                 {cart.map((item) => (
                   <div key={item.id} className="flex gap-3 items-start">
                     <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0 border border-gray-200">
-                      <img alt={item.name} className="w-full h-full object-cover" src={item.image} />
+                      <img alt={item.main_image} className="w-full h-full object-cover" src={item.main_image} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-medium text-[#181411] line-clamp-2">{item.name}</h3>
@@ -112,6 +112,7 @@ const Checkout = () => {
                       </div>
                     </div>
                   </div>
+                  
                 ))}
               </div>
               <div className="mb-6 pb-6 border-b border-gray-100">
