@@ -112,7 +112,7 @@ const AppContent = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login/>} />
-        <Route path="/signup" element={user ? <Navigate to="/" />: <Signup/>} />
+        <Route path="/signup" element={<Signup/>} />
         <Route path="/forgot-password" element={<ForgotPassword/>}/>
         
         <Route path="/orders" element={user ? <OrdersPage /> : <Navigate to="/login" />} />
