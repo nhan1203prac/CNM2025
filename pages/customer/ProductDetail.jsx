@@ -53,14 +53,8 @@ const ProductDetail = () => {
   const allImages = [product.main_image, ...(product.images?.map(img => img.image_url) || [])];
 
 
-  const handleAddToCart = () => {
-    const selectedOptions = {
-      color: selectedColor,
-      storage: selectedStorage,
-      size: selectedSize
-    };
-    addToCart(product, quantity, selectedOptions);
-    alert("Đã thêm vào giỏ hàng!");
+  const handleAddToCart = async () => {
+    await addToCart(product, quantity);
   };
 
   return (
