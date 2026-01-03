@@ -7,21 +7,38 @@ const CartContext = createContext(undefined);
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
-  const addToCart = (product, qty, size, color) => {
-    setCart(prev => {
-      const exist = prev.find(
-        i => i.id === product.id && i.selectedSize === size && i.selectedColor === color
+  const addToCart = (product, quantity, options = {}) => {
+  setCart(prevCart => {
+    
+    const isExist = prevCart.find(item => 
+      item.id === product.id &&
+    
+      item.selectedColor === options.color && 
+      item.selectedSize === options.size &&
+      item.selectedStorage === options.storage
+    );
+
+    if (isExist) {
+      return prevCart.map(item =>
+        (item.id === product.id && 
+         item.selectedColor === options.color && 
+         item.selectedSize === options.size &&
+         item.selectedStorage === options.storage)
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
       );
+    }
 
-      if (exist) {
-        return prev.map(i =>
-          i === exist ? { ...i, quantity: i.quantity + qty } : i
-        );
-      }
-
-      return [...prev, { ...product, quantity: qty, selectedSize: size, selectedColor: color }];
-    });
-  };
+   
+    return [...prevCart, { 
+      ...product, 
+      quantity, 
+      selectedColor: options.color, 
+      selectedSize: options.size,
+      selectedStorage: options.storage 
+    }];
+  });
+};
 
   const removeFromCart = (id) =>
     setCart(prev => prev.filter(i => i.id !== id));

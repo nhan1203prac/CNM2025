@@ -122,7 +122,7 @@ const ProductCard = ({ product, onToggleFavorite }) => {
           </h3>
         </Link>
 
-        {/* Giá sản phẩm */}
+  
 
         <div className="flex flex-wrap items-baseline gap-2 mt-1">
           <span className="text-primary text-base md:text-lg font-black">
@@ -136,17 +136,18 @@ const ProductCard = ({ product, onToggleFavorite }) => {
           )}
         </div>
 
-        {/* Nút thêm vào giỏ hàng */}
 
-        <button
-          onClick={handleAddToCart}
-          className="mt-3 w-full py-2 rounded-lg border-2 border-gray-100 text-[#181411] font-bold text-xs md:text-sm hover:border-primary hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center gap-2 active:scale-95"
-        >
-          <span className="material-symbols-outlined text-[18px]">
-            add_shopping_cart
-          </span>
-          Thêm vào giỏ
-        </button>
+
+        <Link 
+  to={`/product/${product.id}`} 
+  className="mt-3 w-full py-2 rounded-lg border-2 border-gray-100 text-[#181411] font-bold text-xs md:text-sm hover:border-primary hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center gap-2 active:scale-95"
+>
+  <span className="material-symbols-outlined text-[18px]">
+    visibility 
+  </span>
+  Xem chi tiết
+</Link>
+
       </div>
     </div>
   );
