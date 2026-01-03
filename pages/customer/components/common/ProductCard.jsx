@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useCart } from '../../../context/CartContext';
 import baseAPI from '../../../api/baseApi';
 import { toast } from "react-hot-toast";
+import { ShoppingCart, Eye } from "lucide-react"; 
 
 const ProductCard = ({ product, onToggleFavorite }) => {
   const { addToCart } = useCart();
@@ -22,23 +23,19 @@ const ProductCard = ({ product, onToggleFavorite }) => {
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
-
       currency: "VND",
     }).format(value);
   };
 
   const handleFavoriteClick = async (e) => {
     e.preventDefault();
-
     e.stopPropagation();
 
     try {
       const response = await baseAPI.post(`/favorites/${id}`);
-
       if (onToggleFavorite) {
         onToggleFavorite(id, response.data.is_favorite);
       }
-
       toast.success(
         response.data.is_favorite
           ? "Đã thêm vào yêu thích"
@@ -51,25 +48,22 @@ const ProductCard = ({ product, onToggleFavorite }) => {
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-
     e.stopPropagation();
 
-    addToCart(product, 1, "Default", "Default");
-
-    toast.success("Đã thêm vào giỏ hàng");
+    addToCart(product,1);
   };
 
   return (
-    <div className="flex flex-col gap-3 group bg-white rounded-xl p-2 hover:shadow-xl transition-all duration-300">
+    <div className="flex flex-col gap-3 group bg-white rounded-xl p-2 hover:shadow-xl transition-all duration-300 border border-transparent hover:border-slate-100">
       <div className="relative w-full aspect-[3/4] bg-gray-100 rounded-xl overflow-hidden">
         {discount_percent > 0 && (
-          <div className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded shadow-sm">
+          <div className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[10px] md:text-xs font-black px-2 py-1 rounded shadow-sm">
             -{discount_percent}%
           </div>
         )}
 
         {is_new && !discount_percent && (
-          <div className="absolute top-3 left-3 z-10 bg-primary text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded shadow-sm">
+          <div className="absolute top-3 left-3 z-10 bg-primary text-white text-[10px] md:text-xs font-black px-2 py-1 rounded shadow-sm uppercase italic">
             NEW
           </div>
         )}
@@ -90,9 +84,7 @@ const ProductCard = ({ product, onToggleFavorite }) => {
         <Link to={`/product/${id}`} className="block w-full h-full">
           <img
             alt={name}
-            src={
-              main_image || "https://via.placeholder.com/400x500?text=No+Image"
-            }
+            src={main_image || "https://via.placeholder.com/400x500?text=No+Image"}
             className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
             loading="lazy"
           />
@@ -102,52 +94,52 @@ const ProductCard = ({ product, onToggleFavorite }) => {
       <div className="flex flex-col gap-1 px-1 pb-2">
         <div className="flex items-center justify-between text-[11px] md:text-xs">
           <div className="flex items-center gap-1 text-yellow-500">
-            <span className="material-symbols-outlined text-[14px] fill-current">
-              star
-            </span>
-
+            <span className="material-symbols-outlined text-[14px] fill-current">star</span>
             <span className="font-bold text-gray-700">{rating_avg || 5.0}</span>
-
             <span className="text-gray-400">({reviews_count || 0})</span>
           </div>
-
-          <div className="text-gray-400 font-medium">
+          <div className="text-gray-400 font-medium italic">
             Đã bán {product.sold_count || 0}
           </div>
         </div>
 
         <Link to={`/product/${id}`}>
-          <h3 className="text-[#181411] text-sm md:text-base font-bold line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors leading-tight">
+          <h3 className="text-[#181411] text-sm md:text-base font-black line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors leading-tight uppercase mt-1">
             {name}
           </h3>
         </Link>
 
-  
-
         <div className="flex flex-wrap items-baseline gap-2 mt-1">
-          <span className="text-primary text-base md:text-lg font-black">
+          <span className="text-primary text-base md:text-lg font-black italic">
             {formatCurrency(price)}
           </span>
-
           {original_price > price && (
-            <span className="text-gray-400 text-xs md:text-sm line-through decoration-1">
+            <span className="text-gray-400 text-xs md:text-sm line-through decoration-1 italic">
               {formatCurrency(original_price)}
             </span>
           )}
         </div>
 
+        {/* Cụm nút bấm phía dưới */}
+        <div className="flex gap-2 mt-3">
+          {/* Nút Xem chi tiết (Chiếm phần lớn) */}
+          <Link 
+            to={`/product/${id}`} 
+            className="flex-1 py-2.5 rounded-xl border-2 border-slate-100 text-[#181411] font-black text-[10px] md:text-[11px] uppercase tracking-wider hover:border-primary hover:text-primary transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 italic"
+          >
+            <Eye size={16} />
+            Xem chi tiết
+          </Link>
 
-
-        <Link 
-  to={`/product/${product.id}`} 
-  className="mt-3 w-full py-2 rounded-lg border-2 border-gray-100 text-[#181411] font-bold text-xs md:text-sm hover:border-primary hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center gap-2 active:scale-95"
->
-  <span className="material-symbols-outlined text-[18px]">
-    visibility 
-  </span>
-  Xem chi tiết
-</Link>
-
+          {/* Nút Thêm vào giỏ (Nút icon nhỏ hơn nhưng nổi bật) */}
+          <button
+            onClick={handleAddToCart}
+            className="size-10 md:size-11 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20 hover:brightness-110 transition-all active:scale-90"
+            title="Thêm vào giỏ hàng"
+          >
+            <ShoppingCart size={18} />
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,65 +1,71 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
-
-
+import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from "react";
+import baseAPI from "../api/baseApi";
+import { toast } from "react-hot-toast";
 
 const CartContext = createContext(undefined);
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const addToCart = (product, quantity, options = {}) => {
-  setCart(prevCart => {
-    
-    const isExist = prevCart.find(item => 
-      item.id === product.id &&
-    
-      item.selectedColor === options.color && 
-      item.selectedSize === options.size &&
-      item.selectedStorage === options.storage
-    );
-
-    if (isExist) {
-      return prevCart.map(item =>
-        (item.id === product.id && 
-         item.selectedColor === options.color && 
-         item.selectedSize === options.size &&
-         item.selectedStorage === options.storage)
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      );
+  const fetchCart = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await baseAPI.get("/cart");
+      setCart(res.data);
+    } catch (err) {
+      console.error("Lỗi tải giỏ hàng:", err);
+      if (err.response?.status === 401) setCart([]);
+    } finally {
+      setLoading(false);
     }
+  }, []);
 
-   
-    return [...prevCart, { 
-      ...product, 
-      quantity, 
-      selectedColor: options.color, 
-      selectedSize: options.size,
-      selectedStorage: options.storage 
-    }];
-  });
-};
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
 
-  const removeFromCart = (id) =>
-    setCart(prev => prev.filter(i => i.id !== id));
+  const addToCart = async (product, quantity = 1) => {
+    try {
+      await baseAPI.post(`/cart/add?product_id=${product.id}&quantity=${quantity}`);
+      
+      toast.success(`Đã thêm ${quantity} sản phẩm vào giỏ`);
+      fetchCart(); 
+    } catch (err) {
+      const msg = err.response?.data?.detail || "Vui lòng đăng nhập để mua hàng";
+      toast.error(msg);
+    }
+  };
 
-  const updateQuantity = (id, qty) =>
-    setCart(prev =>
-      prev.map(i =>
-        i.id === id ? { ...i, quantity: Math.max(1, qty) } : i
-      )
-    );
 
-  const clearCart = () => setCart([]);
+  const removeFromCart = async (cartItemId) => {
+    try {
+      await baseAPI.delete(`/cart/${cartItemId}`);
+      fetchCart();
+    } catch (err) {
+      toast.error("Không thể cập nhật giỏ hàng");
+    }
+  };
 
-  const subtotal = useMemo(
-    () => cart.reduce((sum, i) => sum + i.price * i.quantity, 0),
-    [cart]
-  );
+  const subtotal = useMemo(() => {
+    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }, [cart]);
+
+  const totalItems = useMemo(() => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+  }, [cart]);
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, subtotal }}
+      value={{ 
+        cart, 
+        loading,
+        addToCart, 
+        removeFromCart, 
+        fetchCart, 
+        subtotal, 
+        totalItems 
+      }}
     >
       {children}
     </CartContext.Provider>
