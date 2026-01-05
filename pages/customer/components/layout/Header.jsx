@@ -8,9 +8,11 @@ import {
   LogOut,
   Package,
   Heart,
+  Globe,
 } from "lucide-react";
 import { useCart } from "../../../context/CartContext";
 import { useAuth } from "../../../context/AuthContext";
+import { untils } from "../../../../languages/untils";
 const Header = () => {
   const { cart } = useCart();
   const { user, logout } = useAuth();
@@ -18,6 +20,15 @@ const Header = () => {
   console.log("user", user);
   const [openUserMenu, setOpenUserMenu] = useState(false);
   const userMenuRef = useRef(null);
+
+  const [lang, setLang] = useState(untils.getLang());
+
+const changeLang = (l) => {
+  untils.setLang(l);
+  setLang(l);
+  localStorage.setItem("lang", l);
+  window.location.reload(); 
+};
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -116,6 +127,33 @@ const Header = () => {
               )}
             </Link>
 
+            <div className="relative group">
+  <button className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-[#f4f2f0]">
+    <Globe size={18} />
+    <span className="text-xs font-bold">{lang}</span>
+  </button>
+
+  <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+    <button
+      onClick={() => changeLang("vi-VN")}
+      className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-100 ${
+        lang === "vi-VN" ? "font-bold text-primary" : ""
+      }`}
+    >
+      🇻🇳 Tiếng Việt
+    </button>
+    <button
+      onClick={() => changeLang("en-US")}
+      className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-100 ${
+        lang === "en-US" ? "font-bold text-primary" : ""
+      }`}
+    >
+      🇺🇸 English
+    </button>
+  </div>
+</div>
+
+
             {user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
@@ -160,6 +198,8 @@ const Header = () => {
                     </div>
                   </div>
                 )}
+
+
               </div>
             ) : (
               <Link
