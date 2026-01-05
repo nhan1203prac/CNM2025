@@ -1,34 +1,66 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ProductCard from './components/common/ProductCard';
-// 1. Import untils và Context
 import { untils } from '../../languages/untils';
+import { 
+  Search, 
+  Filter, 
+  ChevronLeft, 
+  ChevronRight, 
+  Loader2, 
+  Star, 
+  ChevronRight as ChevronIcon,
+  FilterX
+} from 'lucide-react';
 
 const ProductList = () => {
-  // 2. Kích hoạt hook
-
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Định nghĩa giá trị mặc định cho "Tất cả" dựa trên key
-  const ALL_CATEGORY_KEY = 'ALL'; 
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, pages: 1 });
 
-  const initialFilters = {
+  const ALL_CATEGORY_KEY = 'ALL';
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    category: ALL_CATEGORY_KEY,
     rating: 0,
-    priceRange: { min: '', max: '' },
-    category: ALL_CATEGORY_KEY
-  };
+    minPrice: '',
+    maxPrice: ''
+  });
 
-  const [selectedRating, setSelectedRating] = useState(initialFilters.rating);
-  const [priceRange, setPriceRange] = useState(initialFilters.priceRange);
-  const [selectedCategory, setSelectedCategory] = useState(initialFilters.category);
+  const [tempFilters, setTempFilters] = useState({ ...appliedFilters });
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await axios.get('http://127.0.0.1:8000/api/v1/categories/all');
+        setCategories([{ id: ALL_CATEGORY_KEY, name: untils.mess("productList.sidebar.all_categories") }, ...res.data]);
+      } catch (e) {
+        console.error("Lỗi lấy danh mục:", e);
+      }
+    };
+    fetchCats();
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/v1/products');
-        setProducts(response.data);
+        const params = {
+          page: page,
+          size: 12,
+          category_id: appliedFilters.category === ALL_CATEGORY_KEY ? null : appliedFilters.category,
+          min_price: appliedFilters.minPrice || null,
+          max_price: appliedFilters.maxPrice || null,
+          rating: appliedFilters.rating || null
+        };
+        const res = await axios.get('http://127.0.0.1:8000/api/v1/products', { params });
+        setProducts(res.data.items);
+        setPagination({ total: res.data.total, pages: res.data.pages });
+        console.log("Res", res.data.items)
       } catch (error) {
         console.error("Lỗi kết nối API:", error);
       } finally {
@@ -36,184 +68,179 @@ const ProductList = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [page, appliedFilters]);
 
-  // Danh mục: Map label cho "Tất cả", các mục khác giả sử lấy từ DB hoặc hardcode thì map tương ứng nếu cần
-  const categories = [
-    { id: ALL_CATEGORY_KEY, name: untils.mess("productList.sidebar.all_categories") },
-    { id: 1, name: 'Điện thoại' },
-    { id: 2, name: 'Laptop' },
-    { id: 3, name: 'Thời trang' }
-  ];
-
-  const clearFilters = () => {
-    setSelectedRating(initialFilters.rating);
-    setPriceRange(initialFilters.priceRange);
-    setSelectedCategory(initialFilters.category);
+  const handleApplyFilters = () => {
+    setAppliedFilters(tempFilters);
+    setPage(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const isFiltering = selectedRating !== 0 || selectedCategory !== ALL_CATEGORY_KEY || priceRange.min !== '' || priceRange.max !== '';
+  const clearFilters = () => {
+    const reset = { category: ALL_CATEGORY_KEY, rating: 0, minPrice: '', maxPrice: '' };
+    setTempFilters(reset);
+    setAppliedFilters(reset);
+    setPage(1);
+  };
 
-  const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      const productRatingRounded = product.rating_avg ? Math.round(product.rating_avg) : 0;
-      const matchRating = selectedRating === 0 || productRatingRounded === selectedRating;
-      
-      const matchCategory = selectedCategory === ALL_CATEGORY_KEY || product.category_id === selectedCategory;
-      
-      const minPrice = priceRange.min === '' ? 0 : parseInt(priceRange.min);
-      const maxPrice = priceRange.max === '' ? Infinity : parseInt(priceRange.max);
-      const matchPrice = product.price >= minPrice && product.price <= maxPrice;
-      
-      return matchRating && matchCategory && matchPrice;
-    });
-  }, [products, selectedRating, selectedCategory, priceRange]);
-
-  if (loading) return <div className="text-center py-20">{untils.mess("productList.loading")}</div>;
+  const isFiltering = appliedFilters.rating !== 0 || appliedFilters.category !== ALL_CATEGORY_KEY || appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '';
 
   return (
-    <div className="bg-background-light min-h-screen pb-16">
-      <div className="max-w-[1440px] mx-auto px-4 lg:px-40 py-8">
-        <nav className="flex items-center text-sm text-gray-500 mb-2">
-          <Link className="hover:text-primary transition-colors" to="/">
+    <div className="bg-white min-h-screen pb-20 font-sans text-slate-800">
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-40 py-10">
+        
+        <nav className="flex items-center text-sm text-slate-500 mb-4">
+          <Link className="hover:text-primary font-medium" to="/">
             {untils.mess("header.nav.home")}
           </Link>
-          <span className="material-symbols-outlined text-sm mx-1">chevron_right</span>
-          <span className="text-[#181411] font-medium">
+          <ChevronIcon size={14} className="mx-2" />
+          <span className="text-slate-800 font-semibold uppercase tracking-tight">
             {untils.mess("productList.breadcrumb")}
           </span>
         </nav>
 
-        <h1 className="text-3xl font-bold text-[#181411] mb-8">
+        <h1 className="text-3xl font-bold text-slate-900 mb-10 uppercase">
           {untils.mess("productList.title")}
         </h1>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          <aside className="w-full lg:w-64 shrink-0 flex flex-col gap-6">
-            
-            {/* CATEGORIES */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="font-bold text-[#181411] mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-xl">category</span>
-                {untils.mess("productList.sidebar.categories_title")}
-              </h3>
-              <div className="flex flex-col gap-3">
-                {categories.map((cat) => (
-                  <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
-                    <input 
-                      type="radio" 
-                      name="category"
-                      checked={selectedCategory === cat.id}
-                      onChange={() => setSelectedCategory(cat.id)}
-                      className="w-4 h-4 border-gray-300 text-primary focus:ring-primary cursor-pointer transition-all" 
-                    />
-                    <span className={`text-sm transition-colors ${selectedCategory === cat.id ? 'text-primary font-bold' : 'text-gray-600 group-hover:text-primary'}`}>
-                      {cat.name}
-                    </span>
-                  </label>
-                ))}
+        <div className="flex flex-col lg:flex-row gap-10">
+          
+          <aside className="w-full lg:w-64 shrink-0">
+            <div className="sticky top-24 space-y-8">
+              <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
+                <Filter size={18} />
+                <h3 className="font-bold uppercase text-sm">Lọc sản phẩm</h3>
               </div>
 
-              {isFiltering && (
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Danh mục</p>
+                <div className="space-y-3">
+                  {categories.map((cat) => (
+                    <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
+                      <input 
+                        type="radio" 
+                        name="category"
+                        checked={tempFilters.category === cat.id}
+                        onChange={() => setTempFilters({...tempFilters, category: cat.id})}
+                        className="w-4 h-4 border-slate-300 text-primary focus:ring-0 cursor-pointer" 
+                      />
+                      <span className={`text-sm ${tempFilters.category === cat.id ? 'text-primary font-bold' : 'text-slate-600 group-hover:text-primary'}`}>
+                        {cat.name}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Khoảng giá</p>
+                <div className="space-y-2">
+                  <input 
+                    type="number" 
+                    placeholder="Từ" 
+                    className="w-full h-10 px-3 bg-slate-50 rounded border-none text-sm outline-none focus:ring-1 focus:ring-primary"
+                    value={tempFilters.minPrice}
+                    onChange={(e) => setTempFilters({...tempFilters, minPrice: e.target.value})}
+                  />
+                  <input 
+                    type="number" 
+                    placeholder="Đến" 
+                    className="w-full h-10 px-3 bg-slate-50 rounded border-none text-sm outline-none focus:ring-1 focus:ring-primary"
+                    value={tempFilters.maxPrice}
+                    onChange={(e) => setTempFilters({...tempFilters, maxPrice: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Đánh giá</p>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button key={star} onClick={() => setTempFilters({...tempFilters, rating: star})}>
+                      <Star 
+                        size={20} 
+                        className={`${star <= tempFilters.rating ? 'fill-yellow-500 text-yellow-500' : 'text-slate-200'}`} 
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100">
                 <button 
-                  onClick={clearFilters}
-                  className="mt-6 w-full flex items-center justify-center gap-2 text-red-500 hover:bg-red-50 font-bold text-xs py-2.5 rounded-lg border border-red-100 transition-all"
+                  onClick={handleApplyFilters}
+                  className="w-full py-3 bg-slate-900 text-white rounded font-bold text-xs uppercase tracking-widest hover:bg-primary transition-colors"
                 >
-                  <span className="material-symbols-outlined text-sm">filter_alt_off</span>
-                  {untils.mess("productList.sidebar.clear_filters")}
+                  Áp dụng
                 </button>
-              )}
-            </div>
-
-            {/* PRICE RANGE */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="font-bold text-[#181411] mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-xl">payments</span>
-                {untils.mess("productList.sidebar.price.title")}
-              </h3>
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2">
-                  <input 
-                    type="number" 
-                    placeholder={untils.mess("productList.sidebar.price.from")} 
-                    className="w-full rounded-lg border-gray-200 text-sm p-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                    value={priceRange.min}
-                    onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
-                  />
-                  <span className="text-gray-400">-</span>
-                  <input 
-                    type="number" 
-                    placeholder={untils.mess("productList.sidebar.price.to")} 
-                    className="w-full rounded-lg border-gray-200 text-sm p-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                    value={priceRange.max}
-                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* RATING */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="font-bold text-[#181411] mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-xl">star_rate</span>
-                {untils.mess("productList.sidebar.rating.title")}
-              </h3>
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        onClick={() => setSelectedRating(star)}
-                        className="focus:outline-none transition-transform active:scale-125"
-                      >
-                        <span 
-                          className={`material-symbols-outlined text-2xl transition-colors ${
-                            star <= selectedRating ? 'text-yellow-500' : 'text-gray-300'
-                          }`}
-                          style={{ fontVariationSettings: star <= selectedRating ? "'FILL' 1" : "'FILL' 0" }}
-                        >
-                          star
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  {selectedRating > 0 && (
-                    <span className="text-sm font-bold text-primary">
-                      {selectedRating} {untils.mess("productList.sidebar.rating.suffix")}
-                    </span>
-                  )}
-                </div>
-                <p className="text-[11px] text-gray-400 italic">
-                  {untils.mess("productList.sidebar.rating.helper")} {selectedRating} {untils.mess("productList.sidebar.rating.helper_suffix")}
-                </p>
+                {isFiltering && (
+                  <button 
+                    onClick={clearFilters}
+                    className="w-full mt-2 py-2 flex items-center justify-center gap-2 text-slate-400 font-bold text-[10px] uppercase hover:text-red-500 transition-colors"
+                  >
+                    <FilterX size={14} /> Xóa lọc
+                  </button>
+                )}
               </div>
             </div>
           </aside>
 
-          {/* MAIN CONTENT */}
           <div className="flex-1">
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-              <p className="text-sm text-gray-500">
-                {untils.mess("productList.results.found_prefix")} <span className="font-bold text-[#181411]">{filteredProducts.length}</span> {untils.mess("productList.results.found_suffix")}
+            <div className="mb-6 pb-4 border-b border-slate-100 flex items-center justify-between">
+              <p className="text-sm font-medium text-slate-500">
+                Kết quả: <span className="text-slate-900 font-bold">{pagination.total}</span> sản phẩm
               </p>
             </div>
 
-            {filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredProducts.map(product => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-40">
+                <Loader2 className="animate-spin text-primary mb-4" size={32} />
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Đang tải...</p>
               </div>
+            ) : products.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-10">
+                  {products.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+
+                {pagination.pages > 1 && (
+                  <div className="flex justify-center items-center gap-2 mt-16 pt-8 border-t border-slate-100">
+                    <button 
+                      disabled={page === 1}
+                      onClick={() => { setPage(page - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className="w-10 h-10 flex items-center justify-center disabled:opacity-20 hover:text-primary transition-colors"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    
+                    {[...Array(pagination.pages)].map((_, i) => (
+                      <button
+                        key={i + 1}
+                        onClick={() => { setPage(i + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                        className={`w-10 h-10 font-bold text-sm transition-colors ${
+                          page === i + 1 ? 'text-primary' : 'text-slate-400 hover:text-slate-800'
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+
+                    <button 
+                      disabled={page === pagination.pages}
+                      onClick={() => { setPage(page + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className="w-10 h-10 flex items-center justify-center disabled:opacity-20 hover:text-primary transition-colors"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
-              <div className="bg-white rounded-xl p-20 text-center border border-dashed border-gray-300">
-                <span className="material-symbols-outlined text-6xl text-gray-200 mb-4">search_off</span>
-                <p className="text-gray-500 font-medium">
-                  {untils.mess("productList.results.empty_msg")}
-                </p>
-                <button onClick={clearFilters} className="mt-4 text-primary font-bold hover:underline">
-                  {untils.mess("productList.results.btn_try_clear")}
-                </button>
+              <div className="py-32 text-center border-2 border-dashed border-slate-100 rounded-lg">
+                <p className="text-slate-400 font-semibold uppercase text-sm">Không có sản phẩm nào</p>
+                <button onClick={clearFilters} className="mt-4 text-primary font-bold text-xs uppercase underline">Xóa lọc và thử lại</button>
               </div>
             )}
           </div>
