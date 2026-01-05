@@ -1,13 +1,16 @@
+import locales from "./index.js";
+
 const languages = {
   "en-US": "English",
   "vi-VN": "Tiếng Việt",
 };
 
-let currentLang = "vi-VN";
+let currentLang = localStorage.getItem("lang") || "vi-VN"
 
 export const untils = {
     setLang(lang) {
         currentLang = lang;
+        localStorage.setItem("lang", lang);
     },
     getLang(){
         return currentLang;
@@ -15,7 +18,7 @@ export const untils = {
 
     mess(key){
         const keys = key.split('.');
-        let result = languages[currentLang];
+        let result = locales[currentLang];
 
         for (let k of keys) {
             result = result?.[k];
