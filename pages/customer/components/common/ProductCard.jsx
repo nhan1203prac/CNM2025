@@ -4,8 +4,11 @@ import { useCart } from '../../../context/CartContext';
 import baseAPI from '../../../api/baseApi';
 import { toast } from "react-hot-toast";
 import { ShoppingCart, Eye } from "lucide-react"; 
+// 1. Import untils và Context
+import { untils } from "../../../../languages/untils";
 
 const ProductCard = ({ product, onToggleFavorite }) => {
+  // 2. Kích hoạt hook để lắng nghe thay đổi ngôn ngữ
   const { addToCart } = useCart();
   const {
     id,
@@ -38,11 +41,11 @@ const ProductCard = ({ product, onToggleFavorite }) => {
       }
       toast.success(
         response.data.is_favorite
-          ? "Đã thêm vào yêu thích"
-          : "Đã xóa khỏi yêu thích"
+          ? untils.mess("productCard.toast.add_fav")     // Đã sửa thành productCard
+          : untils.mess("productCard.toast.remove_fav")  // Đã sửa thành productCard
       );
     } catch (error) {
-      toast.error("Vui lòng đăng nhập để thực hiện tính năng này");
+      toast.error(untils.mess("productCard.toast.login_required")); // Đã sửa thành productCard
     }
   };
 
@@ -50,7 +53,7 @@ const ProductCard = ({ product, onToggleFavorite }) => {
     e.preventDefault();
     e.stopPropagation();
 
-    addToCart(product,1);
+    addToCart(product, 1);
   };
 
   return (
@@ -64,7 +67,7 @@ const ProductCard = ({ product, onToggleFavorite }) => {
 
         {is_new && !discount_percent && (
           <div className="absolute top-3 left-3 z-10 bg-primary text-white text-[10px] md:text-xs font-black px-2 py-1 rounded shadow-sm uppercase italic">
-            NEW
+            {untils.mess("productCard.new_label")} {/* Đã sửa thành productCard */}
           </div>
         )}
 
@@ -99,7 +102,7 @@ const ProductCard = ({ product, onToggleFavorite }) => {
             <span className="text-gray-400">({reviews_count || 0})</span>
           </div>
           <div className="text-gray-400 font-medium italic">
-            Đã bán {product.sold_count || 0}
+            {untils.mess("productCard.sold")} {product.sold_count || 0} {/* Đã sửa thành productCard */}
           </div>
         </div>
 
@@ -122,20 +125,20 @@ const ProductCard = ({ product, onToggleFavorite }) => {
 
         {/* Cụm nút bấm phía dưới */}
         <div className="flex gap-2 mt-3">
-          {/* Nút Xem chi tiết (Chiếm phần lớn) */}
+          {/* Nút Xem chi tiết */}
           <Link 
             to={`/product/${id}`} 
             className="flex-1 py-2.5 rounded-xl border-2 border-slate-100 text-[#181411] font-black text-[10px] md:text-[11px] uppercase tracking-wider hover:border-primary hover:text-primary transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 italic"
           >
             <Eye size={16} />
-            Xem chi tiết
+            {untils.mess("productCard.view_details")} {/* Đã sửa thành productCard */}
           </Link>
 
-          {/* Nút Thêm vào giỏ (Nút icon nhỏ hơn nhưng nổi bật) */}
+          {/* Nút Thêm vào giỏ */}
           <button
             onClick={handleAddToCart}
             className="size-10 md:size-11 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20 hover:brightness-110 transition-all active:scale-90"
-            title="Thêm vào giỏ hàng"
+            title={untils.mess("productCard.add_to_cart_tooltip")} // Đã sửa thành productCard
           >
             <ShoppingCart size={18} />
           </button>

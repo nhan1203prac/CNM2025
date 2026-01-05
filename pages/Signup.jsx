@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import toast from 'react-hot-toast';
+// 1. Import untils và Context
+import { untils } from '../languages/untils';
 
 const Signup = () => {
+  // 2. Kích hoạt hook
+
   const { signup } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -29,9 +33,11 @@ const Signup = () => {
 
     try {
       await signup(formData);
-      toast.success("Đăng ký thành công! Hãy kiểm tra email.");
+      // Map toast
+      toast.success(untils.mess("signup.toast.success"));
       navigate('/verify-email', { state: { email: formData.email } });
     } catch (error) {
+      // Xử lý lỗi
     } finally {
       setLoading(false);
     }
@@ -42,19 +48,28 @@ const Signup = () => {
       <div className="max-w-[480px] w-full bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-4 group">
-            <h2 className="text-[#181411] text-2xl font-bold group-hover:text-primary transition-colors">ShopMới</h2>
+            {/* Tái sử dụng tên app từ header */}
+            <h2 className="text-[#181411] text-2xl font-bold group-hover:text-primary transition-colors">
+              {untils.mess("header.app_name")}
+            </h2>
           </Link>
-          <h1 className="text-3xl font-bold text-[#181411] mb-2">Đăng Ký</h1>
-          <p className="text-gray-500">Tạo tài khoản mới để bắt đầu mua sắm</p>
+          <h1 className="text-3xl font-bold text-[#181411] mb-2">
+            {untils.mess("signup.title")}
+          </h1>
+          <p className="text-gray-500">
+            {untils.mess("signup.subtitle")}
+          </p>
         </div>
         
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="full_name">Họ và tên</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="full_name">
+              {untils.mess("signup.labels.full_name")}
+            </label>
             <input 
               id="full_name"
               className="w-full px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-primary focus:outline-none transition-all" 
-              placeholder="Nguyễn Văn A" 
+              placeholder={untils.mess("signup.placeholders.full_name")} 
               required 
               value={formData.full_name}
               onChange={handleChange}
@@ -62,11 +77,13 @@ const Signup = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="username">Tên đăng nhập</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="username">
+              {untils.mess("signup.labels.username")}
+            </label>
             <input 
               id="username"
               className="w-full px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-primary focus:outline-none transition-all" 
-              placeholder="nguyenvana123" 
+              placeholder={untils.mess("signup.placeholders.username")} 
               required 
               value={formData.username}
               onChange={handleChange}
@@ -74,12 +91,14 @@ const Signup = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="email">Email</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="email">
+              {untils.mess("signup.labels.email")}
+            </label>
             <input 
               id="email"
               type="email"
               className="w-full px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-primary focus:outline-none transition-all" 
-              placeholder="example@gmail.com" 
+              placeholder={untils.mess("signup.placeholders.email")} 
               required 
               value={formData.email}
               onChange={handleChange}
@@ -87,13 +106,15 @@ const Signup = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="password">Mật khẩu</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="password">
+              {untils.mess("signup.labels.password")}
+            </label>
             <div className="relative">
               <input 
                 id="password"
                 type={showPassword ? "text" : "password"}
                 className="w-full px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-primary focus:outline-none transition-all" 
-                placeholder="••••••••" 
+                placeholder={untils.mess("signup.placeholders.password")} 
                 required 
                 value={formData.password}
                 onChange={handleChange}
@@ -113,7 +134,7 @@ const Signup = () => {
           <div className="flex items-start pt-2">
             <input className="w-4 h-4 mt-0.5 border-gray-300 rounded text-primary focus:ring-primary" id="terms" required type="checkbox"/>
             <label className="ml-2 text-sm text-gray-600" htmlFor="terms">
-              Tôi đồng ý với <span className="text-primary font-medium">Điều khoản dịch vụ</span>
+              {untils.mess("signup.terms.prefix")} <span className="text-primary font-medium">{untils.mess("signup.terms.link")}</span>
             </label>
           </div>
 
@@ -122,12 +143,16 @@ const Signup = () => {
             type="submit"
             disabled={loading}
           >
-            {loading ? "Đang xử lý..." : "Đăng ký tài khoản"}
+            {loading 
+                ? untils.mess("signup.btn.loading") 
+                : untils.mess("signup.btn.submit")}
           </button>
         </form>
 
         <div className="mt-8 text-center text-sm text-gray-500">
-          Bạn đã có tài khoản? <Link className="font-bold text-primary hover:underline" to="/login">Đăng nhập ngay</Link>
+          {untils.mess("signup.footer.prompt")} <Link className="font-bold text-primary hover:underline" to="/login">
+            {untils.mess("signup.footer.link")}
+          </Link>
         </div>
       </div>
     </div>

@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import baseAPI from "../api/baseApi";
 import toast from "react-hot-toast";
+// 1. Import untils và Context
+import { untils } from '../../languages/untils';
 
 const VerifyEmail = () => {
+  // 2. Kích hoạt hook
+
   const location = useLocation();
   const navigate = useNavigate();
   const [code, setCode] = useState(["", "", "", "", "", ""]);
@@ -38,7 +42,8 @@ const VerifyEmail = () => {
     e.preventDefault();
     const verificationCode = code.join("");
     if (verificationCode.length < 6) {
-      toast.error("Vui lòng nhập đủ 6 chữ số");
+      // Map text lỗi
+      toast.error(untils.mess("verifyEmail.toast.incomplete_code"));
       return;
     }
 
@@ -47,9 +52,11 @@ const VerifyEmail = () => {
       await baseAPI.post("/auth/verify-email", {
         verification_code: verificationCode,
       });
-      toast.success("Xác minh tài khoản thành công!");
+      // Map text thành công
+      toast.success(untils.mess("verifyEmail.toast.success"));
       navigate("/login");
     } catch (error) {
+       // Xử lý lỗi nếu cần
     } finally {
       setLoading(false);
     }
@@ -57,14 +64,17 @@ const VerifyEmail = () => {
 
   const handleResendCode = async () => {
     if (!email) {
-      toast.error("Không tìm thấy thông tin email");
+      // Map text lỗi
+      toast.error(untils.mess("verifyEmail.toast.no_email"));
       return;
     }
     setResendLoading(true);
     try {
       await baseAPI.post("/auth/send-verification", { email });
-      toast.success("Mã mới đã được gửi vào email của bạn");
+      // Map text thành công
+      toast.success(untils.mess("verifyEmail.toast.resend_success"));
     } catch (error) {
+       // Xử lý lỗi nếu cần
     } finally {
       setResendLoading(false);
     }
@@ -80,12 +90,12 @@ const VerifyEmail = () => {
         </div>
 
         <h1 className="text-2xl font-bold text-[#181411] mb-2">
-          Xác thực Email
+          {untils.mess("verifyEmail.title")}
         </h1>
         <p className="text-gray-500 mb-8">
-          Chúng tôi đã gửi mã xác thực đến <br />
+          {untils.mess("verifyEmail.desc")} <br />
           <span className="font-semibold text-gray-800">
-            {email || "email của bạn"}
+            {email || untils.mess("verifyEmail.default_email")}
           </span>
         </p>
 
@@ -112,19 +122,23 @@ const VerifyEmail = () => {
               loading ? "opacity-70" : "hover:bg-primary/90"
             }`}
           >
-            {loading ? "Đang kiểm tra..." : "Xác nhận"}
+            {loading 
+                ? untils.mess("verifyEmail.btn_verifying") 
+                : untils.mess("verifyEmail.btn_verify")}
           </button>
         </form>
 
         <div className="mt-8">
           <p className="text-sm text-gray-500">
-            Bạn không nhận được mã?{" "}
+            {untils.mess("verifyEmail.footer_text")}{" "}
             <button
               onClick={handleResendCode}
               disabled={resendLoading}
               className="text-primary font-bold hover:underline disabled:opacity-50"
             >
-              {resendLoading ? "Đang gửi..." : "Gửi lại mã"}
+              {resendLoading 
+                ? untils.mess("verifyEmail.btn_resending") 
+                : untils.mess("verifyEmail.btn_resend")}
             </button>
           </p>
         </div>
