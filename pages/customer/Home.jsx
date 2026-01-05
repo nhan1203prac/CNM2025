@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import ProductCard from "./components/common/ProductCard";
 import { Link } from "react-router-dom";
 import baseAPI from "../api/baseApi";
+// 1. Import untils và Context
+import { untils } from "../../languages/untils";
 
 const Home = () => {
+  // 2. Kích hoạt hook
+
   const [data, setData] = useState({ categories: [], products: [] });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(null);
@@ -45,15 +49,18 @@ const Home = () => {
       ),
     }));
   };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Loading...
+        {untils.mess("home.loading")}
       </div>
     );
   }
+
   return (
     <div className="flex flex-col">
+      {/* Hero Section */}
       <section className="w-full bg-white pb-8">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-40 py-5">
           <div className="rounded-2xl overflow-hidden relative shadow-lg">
@@ -65,19 +72,18 @@ const Home = () => {
             >
               <div className="flex flex-col gap-4 text-left max-w-lg">
                 <span className="inline-block px-3 py-1 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-full w-fit">
-                  Summer Collection
+                  {untils.mess("home.hero.badge")}
                 </span>
                 <h1 className="text-white text-4xl md:text-6xl font-black leading-tight tracking-[-0.033em] drop-shadow-sm">
-                  Khuyến mãi <br />{" "}
-                  <span className="text-primary">Mùa hè rực rỡ</span>
+                  {untils.mess("home.hero.title_prefix")} <br />{" "}
+                  <span className="text-primary">{untils.mess("home.hero.title_highlight")}</span>
                 </h1>
                 <h2 className="text-gray-100 text-lg md:text-xl font-medium leading-relaxed drop-shadow-md">
-                  Giảm giá lên đến 50% cho tất cả các sản phẩm thời trang và phụ
-                  kiện.
+                  {untils.mess("home.hero.desc")}
                 </h2>
                 <div className="pt-4">
                   <button className="bg-primary hover:bg-primary/90 text-white text-base font-bold py-3 px-8 rounded-full shadow-lg shadow-primary/30 transition-transform transform hover:scale-105 active:scale-95 flex items-center gap-2">
-                    Mua ngay
+                    {untils.mess("home.hero.btn_buy")}
                     <span className="material-symbols-outlined text-sm">
                       arrow_forward
                     </span>
@@ -89,18 +95,19 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Categories Section */}
       <section className="py-8 bg-background-light">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-40">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-[#181411] text-2xl md:text-[32px] font-bold leading-tight">
-              Danh mục nổi bật
+              {untils.mess("home.categories.title")}
             </h2>
             <Link
               to="/category"
               className="text-primary font-bold text-sm flex items-center hover:underline"
               href="#"
             >
-              Xem tất cả{" "}
+              {untils.mess("home.categories.view_all")}
               <span className="material-symbols-outlined text-sm ml-1">
                 chevron_right
               </span>
@@ -125,7 +132,7 @@ const Home = () => {
                       {cat.name}
                     </p>
                     <p className="text-gray-500 text-sm">
-                      {cat.product_count} Sản phẩm
+                      {cat.product_count} {untils.mess("home.categories.count_suffix")}
                     </p>
                   </div>
                 </div>
@@ -135,15 +142,16 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Best Sellers Section */}
       <section className="py-10 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-40">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
               <h2 className="text-[#181411] text-[32px] font-bold leading-tight">
-                Sản phẩm bán chạy
+                {untils.mess("home.best_sellers.title")}
               </h2>
               <p className="text-gray-500 mt-1">
-                Được khách hàng yêu thích nhất tuần này
+                {untils.mess("home.best_sellers.subtitle")}
               </p>
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
@@ -155,7 +163,7 @@ const Home = () => {
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
-                Tất cả
+                {untils.mess("home.best_sellers.tab_all")}
               </button>
               {data.categories.map((cat) => (
                 <button
@@ -182,7 +190,7 @@ const Home = () => {
                 <span className="material-symbols-outlined text-6xl mb-2">
                   inventory_2
                 </span>
-                <p>Chưa có sản phẩm nào trong danh mục này</p>
+                <p>{untils.mess("home.best_sellers.empty")}</p>
               </div>
             )}
           </div>
@@ -192,7 +200,7 @@ const Home = () => {
                 onClick={handleLoadMore}
                 className="px-8 py-3 rounded-lg border border-gray-200 bg-white text-gray-900 font-bold hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm flex items-center gap-2"
               >
-                Xem thêm sản phẩm
+                {untils.mess("home.best_sellers.btn_load_more")}
                 <span className="material-symbols-outlined">expand_more</span>
               </button>
             </div>
@@ -200,22 +208,22 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Exclusive/Signup Section */}
       <section className="py-12 px-4 lg:px-40 bg-background-light">
         <div className="max-w-[1440px] mx-auto rounded-2xl overflow-hidden bg-background-dark relative flex flex-col md:flex-row shadow-2xl">
           <div className="flex-1 p-8 md:p-12 flex flex-col justify-center items-start gap-4 relative z-10">
             <span className="text-primary font-bold tracking-widest uppercase text-sm">
-              Ưu đãi độc quyền
+              {untils.mess("home.exclusive.badge")}
             </span>
             <h2 className="text-white text-3xl md:text-5xl font-bold leading-tight">
-              Đăng ký thành viên mới <br />
-              Nhận ngay voucher 100k
+              {untils.mess("home.exclusive.title_line1")} <br />
+              {untils.mess("home.exclusive.title_line2")}
             </h2>
             <p className="text-gray-400 max-w-md">
-              Trải nghiệm mua sắm tuyệt vời với hàng ngàn ưu đãi hấp dẫn đang
-              chờ đón bạn.
+              {untils.mess("home.exclusive.desc")}
             </p>
             <button className="mt-4 bg-primary hover:bg-primary/90 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-              Đăng ký ngay
+              {untils.mess("home.exclusive.btn_register")}
             </button>
           </div>
           <div

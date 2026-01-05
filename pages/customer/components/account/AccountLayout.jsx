@@ -30,10 +30,7 @@ const AccountLayout = ({ children }) => {
             <div className="p-6 border-b border-gray-100 flex flex-col items-center text-center bg-gradient-to-b from-orange-50/50 to-white">
               <div className="relative size-24 mb-4">
                 <div className="size-24 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
-                  <img alt="User Avatar" className="w-full h-full object-cover" src={
-                      user?.profile?.avatar ||
-                      "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-                    } />
+                  <img alt="User Avatar" className="w-full h-full object-cover" src={user?.avatar} />
                 </div>
                 <button className="absolute bottom-0 right-0 size-8 bg-white rounded-full shadow border border-gray-100 flex items-center justify-center text-gray-500 hover:text-primary transition-colors">
                   <span className="material-symbols-outlined text-sm">edit</span>
