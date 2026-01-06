@@ -1,4 +1,5 @@
 const fogotPassword = {
+    
     step1: {
         title: "Quên mật khẩu?",
         desc: "Nhập email của bạn để nhận mã khôi phục",

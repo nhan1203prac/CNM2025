@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import baseAPI from '../../api/baseApi';
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs'; 
+// 1. Import untils và Context
+import { untils } from '../../../languages/untils';
 
 const Notifications = () => {
+  // 2. Kích hoạt hook
+
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -12,7 +16,7 @@ const Notifications = () => {
       const res = await baseAPI.get('/notifications/');
       setNotifications(res.data);
     } catch (error) {
-      console.error("Lỗi tải thông báo");
+      console.error(untils.mess("notifications.toast.load_error"));
     } finally {
       setLoading(false);
     }
@@ -24,9 +28,9 @@ const Notifications = () => {
     try {
       await baseAPI.post('/notifications/mark-all-read');
       setNotifications(notifications.map(n => ({ ...n, is_read: true })));
-      toast.success("Đã đánh dấu tất cả là đã đọc");
+      toast.success(untils.mess("notifications.toast.mark_all_success"));
     } catch (error) {
-      toast.error("Thao tác thất bại");
+      toast.error(untils.mess("notifications.toast.action_fail"));
     }
   };
 
@@ -36,27 +40,29 @@ const Notifications = () => {
       await baseAPI.put(`/notifications/${id}/read`);
       setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
     } catch (error) {
-      console.error("Không thể đánh dấu đã đọc");
+      console.error(untils.mess("notifications.toast.mark_one_error"));
     }
   };
 
 
-  if (loading) return <div className="p-10 text-center">Đang tải thông báo...</div>;
+  if (loading) return <div className="p-10 text-center">{untils.mess("notifications.loading")}</div>;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-6 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-[#181411]">Thông báo của tôi</h2>
+          <h2 className="text-xl font-bold text-[#181411]">
+            {untils.mess("notifications.title")}
+          </h2>
           <p className="text-sm text-gray-500">
-            Bạn có {notifications.filter(n => !n.is_read).length} thông báo chưa xem
+            {untils.mess("notifications.unread_prefix")} {notifications.filter(n => !n.is_read).length} {untils.mess("notifications.unread_suffix")}
           </p>
         </div>
         <button 
           onClick={markAllAsRead}
           className="text-sm text-primary font-bold hover:underline flex items-center gap-1"
         >
-          Đánh dấu tất cả đã đọc
+          {untils.mess("notifications.btn_mark_all")}
         </button>
       </div>
 
@@ -83,7 +89,9 @@ const Notifications = () => {
             </div>
           ))
         ) : (
-          <div className="p-20 text-center">Trống...</div>
+          <div className="p-20 text-center">
+            {untils.mess("notifications.empty")}
+          </div>
         )}
       </div>
     </div>
