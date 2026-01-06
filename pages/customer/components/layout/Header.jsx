@@ -168,7 +168,7 @@ const Header = () => {
                   <img
                     src={
                       user?.profile?.avatar ||
-                      "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+                      `https://ui-avatars.com/api/?name=${user.username}`
                     }
                     alt="avatar"
                     className="size-8 rounded-full object-cover border"

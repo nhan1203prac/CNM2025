@@ -1,27 +1,36 @@
 
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 
 
 
-const AccountLayout = ({ children }) => {
-  const { user, logout } = useAuth();
+const AccountLayout = () => {
+  const {logout } = useAuth();
   const { pathname } = useLocation();
+  // const [labePage, setLabelPage] = useState('Tổng quan');
 
+  const user = JSON.parse(localStorage.getItem("user_info"));
+
+  if(!user){
+    return <Navigate to="/login" replace state={{from: pathname}}/>
+  }
   const menuItems = [
     { label: 'Tổng quan', icon: 'dashboard', path: '/account' },
     { label: 'Thông tin tài khoản', icon: 'person', path: '/account/profile' },
     { label: 'Quản lý địa chỉ', icon: 'location_on', path: '/account/addresses' },
-    { label: 'Thông báo', icon: 'notifications', path: '/account/notification', badge: 3 },
+    { label: 'Thông báo', icon: 'notifications', path: '/account/notification'},
   ];
+
+  const currentMenu = menuItems.find(item => item.path === pathname);
+  const labelPage = currentMenu?.label || 'Tổng quan';
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 lg:px-40 py-8 w-full">
       <nav className="flex items-center text-sm text-gray-500 mb-6">
         <Link className="hover:text-primary transition-colors" to="/">Trang chủ</Link>
         <span className="material-symbols-outlined text-sm mx-2">chevron_right</span>
-        <span className="text-[#181411] font-medium">Tài khoản</span>
+        <span className="text-[#181411] font-medium">{labelPage}</span>
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -30,13 +39,11 @@ const AccountLayout = ({ children }) => {
             <div className="p-6 border-b border-gray-100 flex flex-col items-center text-center bg-gradient-to-b from-orange-50/50 to-white">
               <div className="relative size-24 mb-4">
                 <div className="size-24 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
-                  <img alt="User Avatar" className="w-full h-full object-cover" src={user?.avatar} />
+                  <img alt="User Avatar" className="w-full h-full object-cover" src={user?.profile?.avatar || `https://ui-avatars.com/api/?name=${user.username}`} />
                 </div>
-                <button className="absolute bottom-0 right-0 size-8 bg-white rounded-full shadow border border-gray-100 flex items-center justify-center text-gray-500 hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined text-sm">edit</span>
-                </button>
+                
               </div>
-              <h3 className="font-bold text-[#181411] text-xl mb-1">{user?.name}</h3>
+              <h3 className="font-bold text-[#181411] text-xl mb-1">{user?.profile?.full_name}</h3>
               <p className="text-sm text-gray-500">{user?.email}</p>
             </div>
             <nav className="p-3">
@@ -52,7 +59,6 @@ const AccountLayout = ({ children }) => {
                         <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
                         <div className="flex-1 flex items-center justify-between">
                           <span>{item.label}</span>
-                          {item.badge && <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{item.badge}</span>}
                         </div>
                       </Link>
                     </li>
@@ -73,7 +79,7 @@ const AccountLayout = ({ children }) => {
         </aside>
         
         <div className="col-span-1 lg:col-span-3">
-          {children}
+          <Outlet/>
         </div>
       </div>
     </div>
