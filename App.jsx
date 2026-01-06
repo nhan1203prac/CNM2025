@@ -37,6 +37,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import VerifyEmail from "./pages/customer/VerifyPage";
 import ForgotPassword from "./pages/customer/ForgotPassword";
 import CategoryPage from "./pages/customer/CategoryPage";
+import AccountLayout from "./pages/customer/components/account/AccountLayout";
 
 const AdminLayout = ({ children }) => {
   const { pathname } = useLocation();
@@ -118,10 +119,13 @@ const AppContent = () => {
         <Route path="/orders" element={user ? <OrdersPage /> : <Navigate to="/login" />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/favorites" element={user ? <FavoritesPage /> : <Navigate to="/login" />} />
-        <Route path="/account" element={user ? <Dashboard /> : <Navigate to="/login" />} />
-        <Route path="/account/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-        <Route path="/account/notification" element={user ? <Notifications /> : <Navigate to="/login" />} />
-        <Route path="/account/addresses" element={user ? <Addresses /> : <Navigate to="/login" />} />
+        <Route path="/account" element={<AccountLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="notification" element={<Notifications />} />
+          <Route path="addresses" element={<Addresses />} />
+        </Route>
+
         
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

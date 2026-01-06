@@ -4,11 +4,9 @@ import { useCart } from '../../../context/CartContext';
 import baseAPI from '../../../api/baseApi';
 import { toast } from "react-hot-toast";
 import { ShoppingCart, Eye } from "lucide-react"; 
-// 1. Import untils và Context
 import { untils } from "../../../../languages/untils";
 
 const ProductCard = ({ product, onToggleFavorite }) => {
-  // 2. Kích hoạt hook để lắng nghe thay đổi ngôn ngữ
   const { addToCart } = useCart();
   const {
     id,
