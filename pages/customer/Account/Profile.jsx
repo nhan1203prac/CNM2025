@@ -3,9 +3,12 @@ import AccountLayout from '../components/account/AccountLayout';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast'; 
+// 1. Import untils và Context
+import { untils } from '../../../languages/untils';
 
 const Profile = () => {
-  // Lấy user và hàm checkAuth (để cập nhật lại toàn bộ UI sau khi đổi thông tin)
+  // 2. Kích hoạt hook
+
   const { user, checkAuth } = useAuth();
   const fileInputRef = useRef(null);
   
@@ -47,11 +50,11 @@ const Profile = () => {
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("File quá lớn! Vui lòng chọn ảnh dưới 2MB.");
+      toast.error(untils.mess("profile.toast.file_too_large"));
       return;
     }
 
-    const toastId = toast.loading("Đang tải ảnh lên..."); 
+    const toastId = toast.loading(untils.mess("profile.toast.uploading")); 
     setIsUploading(true);
     setPreviewImage(URL.createObjectURL(file));
 
@@ -69,10 +72,10 @@ const Profile = () => {
       setFormData(prev => ({ ...prev, avatarUrl: uploadedUrl }));
       setPreviewImage(uploadedUrl);
       
-      toast.success("Tải ảnh lên thành công!", { id: toastId }); 
+      toast.success(untils.mess("profile.toast.upload_success"), { id: toastId }); 
     } catch (error) {
       console.error("Lỗi upload Cloudinary:", error);
-      toast.error("Tải ảnh thất bại!", { id: toastId });
+      toast.error(untils.mess("profile.toast.upload_fail"), { id: toastId });
     } finally {
       setIsUploading(false);
     }
@@ -81,18 +84,16 @@ const Profile = () => {
   // Xử lý lưu thông tin về Backend
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isUploading) return toast.error("Vui lòng đợi ảnh tải xong!");
+    if (isUploading) return toast.error(untils.mess("profile.toast.wait_upload"));
 
-    const toastId = toast.loading("Đang cập nhật hồ sơ...");
+    const toastId = toast.loading(untils.mess("profile.toast.updating"));
     const API_URL = 'http://localhost:8000/api/v1/auth/users/profile';
     const token = localStorage.getItem('token');
 
-    // CHUẨN HÓA DỮ LIỆU ĐỂ TRÁNH LỖI 422
     const updateData = {
-      full_name: formData.fullname.trim() || null, // Map fullname -> full_name
+      full_name: formData.fullname.trim() || null, 
       phone: formData.phone.trim() || null,
       gender: formData.gender,
-      // Nếu dob là chuỗi rỗng "", chuyển thành null để FastAPI chấp nhận kiểu date
       dob: formData.dob === "" ? null : formData.dob, 
       avatar: formData.avatarUrl || null 
     };
@@ -105,23 +106,33 @@ const Profile = () => {
         }
       });
 
-      toast.success("Cập nhật thông tin thành công!", { id: toastId });
+      toast.success(untils.mess("profile.toast.update_success"), { id: toastId });
       
-      // Gọi checkAuth để cập nhật lại thông tin user trong Context (Header sẽ đổi ảnh/tên ngay)
       if (checkAuth) await checkAuth();
 
     } catch (error) {
       console.error("Lỗi 422 chi tiết:", error.response?.data);
-      const errorMsg = error.response?.data?.detail?.[0]?.msg || "Lỗi cập nhật dữ liệu!";
+      const errorMsg = error.response?.data?.detail?.[0]?.msg || untils.mess("profile.toast.update_error");
       toast.error(errorMsg, { id: toastId });
     }
   };
 
+  // Cấu hình giới tính để map ngôn ngữ (value giữ nguyên, label thay đổi)
+  const genderOptions = [
+    { value: 'Nam', labelKey: 'profile.gender_options.male' },
+    { value: 'Nữ', labelKey: 'profile.gender_options.female' },
+    { value: 'Khác', labelKey: 'profile.gender_options.other' }
+  ];
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-6 md:p-8 border-b border-[#f4f2f0]">
-        <h2 className="text-[#181411] text-3xl font-bold mb-2">Thông Tin Tài Khoản</h2>
-        <p className="text-[#897261] text-base">Quản lý thông tin hồ sơ để bảo mật tài khoản.</p>
+        <h2 className="text-[#181411] text-3xl font-bold mb-2">
+            {untils.mess("profile.title")}
+        </h2>
+        <p className="text-[#897261] text-base">
+            {untils.mess("profile.subtitle")}
+        </p>
       </div>
 
       <div className="p-6 md:p-8 space-y-8">
@@ -143,20 +154,28 @@ const Profile = () => {
             </div>
             {!isUploading && (
               <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-white text-[10px] font-bold">ĐỔI ẢNH</span>
+                <span className="text-white text-[10px] font-bold">
+                    {untils.mess("profile.avatar.overlay_change")}
+                </span>
               </div>
             )}
           </div>
           <div className="flex flex-col gap-3 justify-center">
-            <h3 className="text-[#181411] text-lg font-bold">Ảnh đại diện</h3>
-            <p className="text-xs text-gray-500 italic">Dung lượng tối đa 2MB. Định dạng: JPG, PNG.</p>
+            <h3 className="text-[#181411] text-lg font-bold">
+                {untils.mess("profile.avatar.label")}
+            </h3>
+            <p className="text-xs text-gray-500 italic">
+                {untils.mess("profile.avatar.helper")}
+            </p>
             <button 
               type="button" 
               onClick={() => fileInputRef.current.click()} 
               className="px-6 py-2 rounded-lg bg-[#f4f2f0] hover:bg-[#e6e0db] text-sm font-bold transition-colors disabled:opacity-50"
               disabled={isUploading}
             >
-              {isUploading ? "Đang xử lý..." : "Chọn ảnh mới"}
+              {isUploading 
+                ? untils.mess("profile.avatar.processing") 
+                : untils.mess("profile.avatar.btn_change")}
             </button>
           </div>
         </div>
@@ -166,34 +185,41 @@ const Profile = () => {
         {/* FORM SECTION */}
         <form className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold">Họ và tên</label>
+            <label className="text-sm font-bold">{untils.mess("profile.form.fullname")}</label>
             <input name="fullname" onChange={handleChange} className="w-full h-12 px-4 rounded-lg border border-[#e6e0db] focus:ring-2 focus:ring-orange-500 outline-none" type="text" value={formData.fullname} />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-gray-400">Email (Cố định)</label>
+            <label className="text-sm font-bold text-gray-400">{untils.mess("profile.form.email")}</label>
             <input className="w-full h-12 px-4 rounded-lg border border-[#e6e0db] bg-gray-50 text-gray-400 cursor-not-allowed" disabled value={formData.email} />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold">Số điện thoại</label>
+            <label className="text-sm font-bold">{untils.mess("profile.form.phone")}</label>
             <input name="phone" onChange={handleChange} className="w-full h-12 px-4 rounded-lg border border-[#e6e0db] focus:ring-2 focus:ring-orange-500 outline-none" type="text" value={formData.phone} />
           </div>
 
           <div className="flex flex-col gap-3">
-            <label className="text-sm font-bold">Giới tính</label>
+            <label className="text-sm font-bold">{untils.mess("profile.form.gender")}</label>
             <div className="flex gap-6 h-12 items-center">
-              {['Nam', 'Nữ', 'Khác'].map(g => (
-                <label key={g} className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={handleChange} className="w-5 h-5 accent-orange-600" />
-                  <span className="text-sm">{g}</span>
+              {genderOptions.map(g => (
+                <label key={g.value} className="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="gender" 
+                    value={g.value} 
+                    checked={formData.gender === g.value} 
+                    onChange={handleChange} 
+                    className="w-5 h-5 accent-orange-600" 
+                  />
+                  <span className="text-sm">{untils.mess(g.labelKey)}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold">Ngày sinh</label>
+            <label className="text-sm font-bold">{untils.mess("profile.form.dob")}</label>
             <input name="dob" onChange={handleChange} className="w-full h-12 px-4 rounded-lg border border-[#e6e0db] focus:ring-2 focus:ring-orange-500 outline-none" type="date" value={formData.dob} />
           </div>
 
@@ -203,7 +229,7 @@ const Profile = () => {
               type="submit"
               disabled={isUploading}
             >
-              Lưu thay đổi
+              {untils.mess("profile.form.btn_save")}
             </button>
           </div>
         </form>

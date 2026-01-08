@@ -6,7 +6,6 @@ import { untils } from "../../languages/untils";
 
 const Checkout = () => {
   // 2. Kích hoạt hook
-  useLanguage();
 
   const { cart, subtotal, clearCart } = useCart();
   const navigate = useNavigate();

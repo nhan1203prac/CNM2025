@@ -58,6 +58,7 @@ const ProductList = () => {
           rating: appliedFilters.rating || null
         };
         const res = await axios.get('http://127.0.0.1:8000/api/v1/products', { params });
+        console.log("Params", res);
         setProducts(res.data.items);
         setPagination({ total: res.data.total, pages: res.data.pages });
         console.log("Res", res.data.items)
@@ -83,6 +84,8 @@ const ProductList = () => {
     setPage(1);
   };
 
+  console.log("jvuisd", products)
+
   const isFiltering = appliedFilters.rating !== 0 || appliedFilters.category !== ALL_CATEGORY_KEY || appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '';
 
   return (
@@ -106,14 +109,14 @@ const ProductList = () => {
         <div className="flex flex-col lg:flex-row gap-10">
           
           <aside className="w-full lg:w-64 shrink-0">
-            <div className="sticky top-24 space-y-8">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
+            <div className="sticky top-24 space-y-8 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="flex items-center gap-2 border-b border-slate-100 pb-4 ">
                 <Filter size={18} />
-                <h3 className="font-bold uppercase text-sm">Lọc sản phẩm</h3>
+                <h3 className="font-bold uppercase text-sm">{untils.mess("productList.filter.filter")}</h3>
               </div>
 
               <div>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Danh mục</p>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">{untils.mess("productList.filter.category")}</p>
                 <div className="space-y-3">
                   {categories.map((cat) => (
                     <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
@@ -133,7 +136,7 @@ const ProductList = () => {
               </div>
 
               <div>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Khoảng giá</p>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">{untils.mess("productList.filter.price")}</p>
                 <div className="space-y-2">
                   <input 
                     type="number" 
@@ -153,7 +156,7 @@ const ProductList = () => {
               </div>
 
               <div>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Đánh giá</p>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">{untils.mess("productList.filter.rating")}</p>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button key={star} onClick={() => setTempFilters({...tempFilters, rating: star})}>
@@ -171,14 +174,14 @@ const ProductList = () => {
                   onClick={handleApplyFilters}
                   className="w-full py-3 bg-slate-900 text-white rounded font-bold text-xs uppercase tracking-widest hover:bg-primary transition-colors"
                 >
-                  Áp dụng
+                  {untils.mess("productList.filter.apply")}
                 </button>
                 {isFiltering && (
                   <button 
                     onClick={clearFilters}
                     className="w-full mt-2 py-2 flex items-center justify-center gap-2 text-slate-400 font-bold text-[10px] uppercase hover:text-red-500 transition-colors"
                   >
-                    <FilterX size={14} /> Xóa lọc
+                    <FilterX size={14} /> {untils.mess("productList.filter.clear")}
                   </button>
                 )}
               </div>
@@ -188,14 +191,14 @@ const ProductList = () => {
           <div className="flex-1">
             <div className="mb-6 pb-4 border-b border-slate-100 flex items-center justify-between">
               <p className="text-sm font-medium text-slate-500">
-                Kết quả: <span className="text-slate-900 font-bold">{pagination.total}</span> sản phẩm
+                {untils.mess("productList.filter.result")}: <span className="text-slate-900 font-bold">{pagination.total}</span> {untils.mess("productList.filter.product")}
               </p>
             </div>
 
             {loading ? (
               <div className="flex flex-col items-center justify-center py-40">
                 <Loader2 className="animate-spin text-primary mb-4" size={32} />
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Đang tải...</p>
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">{untils.mess("productList.filter.loading")}</p>
               </div>
             ) : products.length > 0 ? (
               <>
@@ -239,8 +242,8 @@ const ProductList = () => {
               </>
             ) : (
               <div className="py-32 text-center border-2 border-dashed border-slate-100 rounded-lg">
-                <p className="text-slate-400 font-semibold uppercase text-sm">Không có sản phẩm nào</p>
-                <button onClick={clearFilters} className="mt-4 text-primary font-bold text-xs uppercase underline">Xóa lọc và thử lại</button>
+                <p className="text-slate-400 font-semibold uppercase text-sm">{untils.mess("productList.filter.no_result")}</p>
+                <button onClick={clearFilters} className="mt-4 text-primary font-bold text-xs uppercase underline">{untils.mess("productList.filter.clear_and_retry")}</button>
               </div>
             )}
           </div>
