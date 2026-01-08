@@ -2,6 +2,19 @@ const productList = {
     breadcrumb: "Sản phẩm",
     title: "Tất cả sản phẩm",
     loading: "Đang tải sản phẩm...",
+    filter: {
+      filter: "Lọc sản phẩm",
+      category: "Danh mục",
+      price: "Khoảng giá",
+      rating: "Đánh giá",
+      apply: "Áp dụng",
+      clear: "Xóa bộ lọc",
+      result: "Kết quả lọc",
+      product: "sản phẩm",
+      loading: "Đang lọc...",
+      no_result: "Không có sản phẩm nào khớp với bộ lọc.",
+      clear_and_retry: "Xóa bộ lọc và thử lại"
+    },
     sidebar: {
       categories_title: "Danh mục",
       all_categories: "Tất cả",

@@ -1,5 +1,6 @@
 const account =  {
     breadcrumb: "Tài khoản",
+    home: "Trang chủ",
     menu: {
       dashboard: "Tổng quan",
       profile: "Thông tin tài khoản",

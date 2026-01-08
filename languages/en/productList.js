@@ -1,7 +1,22 @@
+import { Filter } from "lucide-react";
+
 const productList = {
     breadcrumb: "Products",
     title: "All Products",
     loading: "Loading products...",
+    filter: {
+      filter: "Filter",
+      category: "Category",
+      price: "Price",
+      rating: "Rating",
+      apply: "Apply Filters",
+      clear: "Clear Filters",
+      result: "Filter Results",
+      product: "product",
+      loading: "Filtering...",
+      no_result: "No products match your filters.",
+      clear_and_retry: "Clear filters and try again"
+    },
     sidebar: {
       categories_title: "Categories",
       all_categories: "All",
