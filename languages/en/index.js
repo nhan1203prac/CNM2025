@@ -15,6 +15,10 @@ import productCard from "./productCard";
 import productDetail from "./productDetail";
 import productList from "./productList";
 import signup from "./signup";
+import addresses from "./addresses";
+import dashboard from "./dashboard";
+import notifications from "./notifications";
+import profile from "./profile";
 
 const en = {
     accountLayout,
@@ -33,7 +37,11 @@ const en = {
     productDetail,
     productList,
     signup,
-    verifyEmail
+    verifyEmail,
+    addresses,
+    dashboard,
+    notifications,
+    profile
 }
 
 export default en
