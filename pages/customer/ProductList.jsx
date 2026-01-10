@@ -58,6 +58,7 @@ const ProductList = () => {
           rating: appliedFilters.rating || null
         };
         const res = await axios.get('http://127.0.0.1:8000/api/v1/products', { params });
+        console.log("va", res)
         setProducts(res.data.items);
         setPagination({ total: res.data.total, pages: res.data.pages });
         console.log("Res", res.data.items)

@@ -1,14 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { Loader2, Trash2, Plus, Minus, ArrowRight, ShoppingBag } from 'lucide-react';
-// 1. Import untils và Context
 import { untils } from "../../languages/untils"; 
+import baseAPI from '../api/baseApi';
+import toast from 'react-hot-toast';
 
 const Cart = () => {
 
   const { cart, loading, removeFromCart, addToCart, subtotal, totalItems } = useCart();
+  const navigate = useNavigate()
+  const handleCheckout = async () => {
+    try {
+      toast.loading(untils.mess("cart.processing") || "Đang tạo đơn hàng...");
+      
+      const res = await baseAPI.post("/orders/create");
+      
+      toast.dismiss();
+      toast.success(untils.mess("cart.create_success") || "Tạo đơn hàng thành công!");
 
+  
+      navigate("/orders"); 
+      
+    } catch (error) {
+      toast.dismiss();
+      const errorMsg = error.response?.data?.detail || "Không thể tạo đơn hàng";
+      toast.error(errorMsg);
+    }
+  };
   const formatCurrency = (amount) => 
     new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
@@ -184,15 +203,15 @@ const Cart = () => {
                 </div>
               </div>
 
-              <Link 
-                to="/checkout"
+              <button 
+                onClick={handleCheckout}
                 className="w-full bg-slate-900 hover:bg-primary text-white py-5 rounded-2xl flex items-center justify-center gap-3 transition-all group shadow-xl shadow-slate-200"
               >
                 <span className="text-xs font-black uppercase tracking-[2px]">
                   {untils.mess("cart.summary.checkout_btn")}
                 </span>
                 <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
-              </Link>
+              </button>
               
               <p className="mt-6 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">
                 {untils.mess("cart.summary.note")}
