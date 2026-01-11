@@ -12,19 +12,19 @@ const Cart = () => {
   const navigate = useNavigate()
   const handleCheckout = async () => {
     try {
-      toast.loading(untils.mess("cart.processing") || "Đang tạo đơn hàng...");
+      toast.loading(untils.mess("cart.processing"));
       
       const res = await baseAPI.post("/orders/create");
       
       toast.dismiss();
-      toast.success(untils.mess("cart.create_success") || "Tạo đơn hàng thành công!");
+      toast.success(untils.mess("cart.create_success"));
 
   
       navigate("/orders"); 
       
     } catch (error) {
       toast.dismiss();
-      const errorMsg = error.response?.data?.detail || "Không thể tạo đơn hàng";
+      const errorMsg = error.response?.data?.detail || untils.mess("cart.cartError");
       toast.error(errorMsg);
     }
   };

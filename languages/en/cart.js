@@ -1,4 +1,7 @@
 const cart = {
+    processing: "Processing...",
+    create_success: "Order created successfully!",
+    cartError: "Unable to create order",
     loading: "Loading cart...",
     empty: {
       title: "Your cart is empty",

@@ -6,7 +6,7 @@ import cart from "./cart";
 import categoryPage from "./categoryPage";
 import checkout from "./checkout";
 import favoritePage from "./favoritePage";
-import fogotPassword from "./fogotPassword";
+import forgotPassword from "./fogotPassword";
 import footer from "./footer";
 import header from "./header";
 import home from "./home";
@@ -19,6 +19,7 @@ import addresses from "./addresses";
 import dashboard from "./dashboard";
 import notifications from "./notifications";
 import profile from "./profile";
+import checkoutForm from "./checkoutForm";
 
 const en = {
     accountLayout,
@@ -27,7 +28,7 @@ const en = {
     categoryPage,
     checkout,
     favoritePage,
-    fogotPassword,
+    forgotPassword,
     header,
     footer,
     home,
@@ -41,7 +42,8 @@ const en = {
     addresses,
     dashboard,
     notifications,
-    profile
+    profile,
+    checkoutForm
 }
 
 export default en

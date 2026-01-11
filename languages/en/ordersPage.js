@@ -1,4 +1,7 @@
 const ordersPage = {
+    conectingPaymentGateway: "Connecting to payment gateway...",
+    btn_pay_now: "Pay Now",
+    paywithcard: "Pay with Card",
     title: "My Orders",
     loading: "Syncing orders...",
     error_load: "Failed to load order history",
@@ -27,7 +30,11 @@ const ordersPage = {
       shipping: "Shipping",
       free: "Free",
       total: "Total Payment",
-      btn_close: "Close Window"
+      btn_close: "Close"
+    },
+    status: {
+      paid: "Paid",
+      unpaid: "Unpaid"
     }
 };
 
