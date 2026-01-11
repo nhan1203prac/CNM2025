@@ -77,11 +77,11 @@ const OrdersPage = () => {
     try {
       const orderToPay = orders.find(o => o.id === orderId);
       setSelectedOrder(orderToPay);
-      toast.loading("Đang kết nối cổng thanh toán...");
+      toast.loading(untils.mess("ordersPage.conectingPaymentGateway"));
       const res = await baseAPI.post(`/payment/intents/${orderId}`);
       setClientSecret(res.data.client_secret);
       setShowStripeModal(true);
-      console.log("Secret nhận được:", res.data.client_secret);
+      // console.log("Secret nhận được:", res.data.client_secret);
       toast.dismiss();
 
     } catch (error) {
@@ -175,14 +175,12 @@ const OrdersPage = () => {
                     {order.payment_status === "PAID" ? (
                       <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[11px] font-bold uppercase">
                         <CheckCircle2 size={12} />{" "}
-                        {untils.mess("ordersPage.status.paid") ||
-                          "Đã thanh toán"}
+                        {untils.mess("ordersPage.status.paid")}
                       </span>
                     ) : (
                       <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-[11px] font-bold uppercase">
                         <Clock size={12} />{" "}
-                        {untils.mess("ordersPage.status.unpaid") ||
-                          "Chờ thanh toán"}
+                        {untils.mess("ordersPage.status.unpaid")}
                       </span>
                     )}
                   </div>
@@ -245,8 +243,7 @@ const OrdersPage = () => {
                           className="flex-1 md:flex-none px-6 py-3 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2"
                         >
                           <Truck size={16} />{" "}
-                          {untils.mess("ordersPage.btn_pay_now") ||
-                            "Thanh toán ngay"}
+                          {untils.mess("ordersPage.btn_pay_now")}
                         </button>
                       )}
 
@@ -363,7 +360,7 @@ const OrdersPage = () => {
       {showStripeModal && clientSecret && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white p-8 rounded-3xl w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Thanh toán bằng thẻ</h2>
+            <h2 className="text-xl font-bold mb-4">{untils.mess("ordersPage.paywithcard")}</h2>
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <CheckoutForm 
                 clientSecret={clientSecret} 
@@ -374,7 +371,7 @@ const OrdersPage = () => {
                 }} 
               />
             </Elements>
-            <button onClick={() => setShowStripeModal(false)} className="mt-4 text-slate-400 w-full text-center">Đóng</button>
+            <button onClick={() => setShowStripeModal(false)} className="mt-4 text-slate-400 w-full text-center">{untils.mess("ordersPage.detail_popup.btn_close")}</button>
           </div>
         </div>
       )}

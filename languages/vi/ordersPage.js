@@ -1,4 +1,7 @@
 const ordersPage = {
+    conectingPaymentGateway: "Đang kết nối cổng thanh toán...",
+    btn_pay_now: "Thanh toán ngay",
+    paywithcard: "Thanh toán bằng thẻ",
     title: "Đơn hàng của tôi",
     loading: "Đang đồng bộ đơn hàng...",
     error_load: "Không thể tải lịch sử đơn hàng",
@@ -27,7 +30,11 @@ const ordersPage = {
       shipping: "Vận chuyển",
       free: "Miễn phí",
       total: "Tổng thanh toán",
-      btn_close: "Đóng cửa sổ"
+      btn_close: "Đóng"
+    },
+    status: {
+      paid: "Đã thanh toán",
+      unpaid: "Chưa thanh toán"
     }
 };
 

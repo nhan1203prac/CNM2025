@@ -1,4 +1,4 @@
-const fogotPassword = {
+const forgotPassword = {
     step1: {
         title: "Forgot Password?",
         desc: "Enter your email to receive a recovery code",
@@ -35,4 +35,4 @@ const fogotPassword = {
       }
 };
 
-export default fogotPassword;
+export default forgotPassword;

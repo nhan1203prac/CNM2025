@@ -1,4 +1,7 @@
 const cart = {
+    processing: "Đang xử lý...",
+    create_success: "Tạo đơn hàng thành công!",
+    cartError: "Không thể tạo đơn hàng",
     loading: "Đang tải giỏ hàng...",
     empty: {
       title: "Giỏ hàng của bạn đang trống",

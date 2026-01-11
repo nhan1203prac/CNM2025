@@ -19,6 +19,7 @@ import addresses from "./addresses";
 import dashboard from "./dashboard";
 import notifications from "./notifications";
 import profile from "./profile";
+import checkoutForm from "./checkoutForm";
 
 const vi = {
     accountLayout,
@@ -41,7 +42,8 @@ const vi = {
     addresses,
     dashboard,
     notifications,
-    profile
+    profile,
+    checkoutForm
 }
 
 export default vi
