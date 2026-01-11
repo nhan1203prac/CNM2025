@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import baseAPI from '../api/baseApi';
 import toast from 'react-hot-toast';
-// 1. Import
 import { untils } from "../../languages/untils";
 
 const ForgotPassword = () => {
-  // 2. Kích hoạt hook
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -42,7 +40,6 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       await baseAPI.post("/auth/forgot-password", { email });
-      // Map toast
       toast.success(untils.mess("forgotPassword.toast.sent"));
       setStep(2);
       startResendTimer();
@@ -57,7 +54,6 @@ const ForgotPassword = () => {
     setResendLoading(true);
     try {
       await baseAPI.post("/auth/forgot-password", { email });
-      // Map toast
       toast.success(untils.mess("forgotPassword.toast.resent"));
       startResendTimer();
       setOtp(['', '', '', '', '', '']);
@@ -83,7 +79,6 @@ const ForgotPassword = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (passwordData.password !== passwordData.confirm) {
-      // Map toast error
       return toast.error(untils.mess("forgotPassword.toast.mismatch"));
     }
 
@@ -93,7 +88,6 @@ const ForgotPassword = () => {
         token: otp.join(''),
         new_password: passwordData.password
       });
-      // Map toast success
       toast.success(untils.mess("forgotPassword.toast.success"));
       navigate('/login');
     } catch (error) {
@@ -103,6 +97,7 @@ const ForgotPassword = () => {
     }
   };
 
+  console.log("util ",untils.mess("forgotPassword.step3.desc"))
   return (
     <div className="min-h-screen bg-background-light flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100">

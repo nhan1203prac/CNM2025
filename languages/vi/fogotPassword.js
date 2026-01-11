@@ -1,4 +1,4 @@
-const fogotPassword = {
+const forgotPassword = {
     step1: {
         title: "Quên mật khẩu?",
         desc: "Nhập email của bạn để nhận mã khôi phục",
@@ -35,4 +35,4 @@ const fogotPassword = {
       }
 };
 
-export default fogotPassword;
+export default forgotPassword;

@@ -18,15 +18,23 @@ export const AuthProvider = ({ children }) => {
           setUser(res.data);
           localStorage.setItem("user_info", JSON.stringify(res.data));
         } catch (err) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user_info");
-          setUser(null);
-          const privatePaths = ["/favorites", "/account", "/admin", "/orders"];
-          const currentPath = window.location.pathname;
+          const status = err.response?.status
+          if(status === 401){
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user_info");
+            setUser(null);
+
+            const privatePaths = ["/favorites", "/account", "/admin", "/orders"];
+            const currentPath = window.location.pathname;
 
           if (privatePaths.some(path => currentPath.startsWith(path))) {
              window.location.href = "/login"; 
           }
+        }else{
+          console.error("Lỗi kết nối server, giữ nguyên phiên đăng nhập cũ.");
+        }
+         
         }
       }
       setLoading(false);

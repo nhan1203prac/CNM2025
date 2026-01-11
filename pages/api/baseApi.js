@@ -29,9 +29,13 @@ baseAPI.interceptors.response.use(
     if (error.response?.status === 401) {
       toast.error("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại");
       localStorage.removeItem("token");
-    } else {
-      toast.error(message);
     }
+    else if( error.response?.status === 500){
+      toast.error("Máy chủ gặp sự cố, vui lòng thử lại sau");
+    }
+    // else {
+    //   toast.error(message);
+    // }
     
     return Promise.reject(error);
   }

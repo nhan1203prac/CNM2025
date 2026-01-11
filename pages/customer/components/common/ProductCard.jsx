@@ -5,9 +5,11 @@ import baseAPI from '../../../api/baseApi';
 import { toast } from "react-hot-toast";
 import { ShoppingCart, Eye } from "lucide-react"; 
 import { untils } from "../../../../languages/untils";
+import { useAuth } from "../../../context/AuthContext";
 
 const ProductCard = ({ product, onToggleFavorite }) => {
   const { addToCart } = useCart();
+  const {user} = useAuth()
   const {
     id,
     name,
@@ -35,15 +37,16 @@ const ProductCard = ({ product, onToggleFavorite }) => {
     try {
       const response = await baseAPI.post(`/favorites/${id}`);
       if (onToggleFavorite) {
+        console.log("favaa", response.data.is_favorite)
         onToggleFavorite(id, response.data.is_favorite);
       }
       toast.success(
         response.data.is_favorite
-          ? untils.mess("productCard.toast.add_fav")     // Đã sửa thành productCard
-          : untils.mess("productCard.toast.remove_fav")  // Đã sửa thành productCard
+          ? untils.mess("productCard.toast.add_fav")     
+          : untils.mess("productCard.toast.remove_fav")  
       );
     } catch (error) {
-      toast.error(untils.mess("productCard.toast.login_required")); // Đã sửa thành productCard
+      // toast.error(untils.mess("productCard.toast.login_required")); 
     }
   };
 
@@ -53,7 +56,7 @@ const ProductCard = ({ product, onToggleFavorite }) => {
 
     addToCart(product, 1);
   };
-
+  console.log("isfav", is_favorite)
   return (
     <div className="flex flex-col gap-3 group bg-white rounded-xl p-2 hover:shadow-xl transition-all duration-300 border border-transparent hover:border-slate-100">
       <div className="relative w-full aspect-[3/4] bg-gray-100 rounded-xl overflow-hidden">
@@ -69,7 +72,9 @@ const ProductCard = ({ product, onToggleFavorite }) => {
           </div>
         )}
 
-        <button
+        {
+          user?(
+            <button
           onClick={handleFavoriteClick}
           className="absolute top-3 right-3 z-10 size-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-600 hover:bg-white hover:text-red-500 transition-all shadow-md active:scale-90"
         >
@@ -81,6 +86,8 @@ const ProductCard = ({ product, onToggleFavorite }) => {
             favorite
           </span>
         </button>
+          ):""
+        }
 
         <Link to={`/product/${id}`} className="block w-full h-full">
           <img
