@@ -34,6 +34,7 @@ const FavoritesPage = () => {
     }
   };
 
+  console.log("favourtie", favorites)
   if (loading) return <div className="text-center py-20">{untils.mess("favoritePage.loading")}</div>;
 
   return (

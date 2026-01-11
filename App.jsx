@@ -58,7 +58,7 @@ const AdminLayout = ({ children }) => {
 
 const CustomerLayout = ({ children }) => {
   const { pathname } = useLocation();
-  const isAuthPage = ["/login", "/signup"].includes(pathname);
+  const isAuthPage = ["/login", "/signup","/forgot-password", "/verify-email"].includes(pathname);
   const { user } = useAuth();
 
   return (

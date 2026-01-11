@@ -13,6 +13,7 @@ import {
   ChevronRight as ChevronIcon,
   FilterX
 } from 'lucide-react';
+import baseAPI from '../api/baseApi';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -21,6 +22,7 @@ const ProductList = () => {
 
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, pages: 1 });
+  // const flagReset = false;
 
   const ALL_CATEGORY_KEY = 'ALL';
 
@@ -57,7 +59,7 @@ const ProductList = () => {
           max_price: appliedFilters.maxPrice || null,
           rating: appliedFilters.rating || null
         };
-        const res = await axios.get('http://127.0.0.1:8000/api/v1/products', { params });
+        const res = await baseAPI.get('/products', { params });
         console.log("va", res)
         setProducts(res.data.items);
         setPagination({ total: res.data.total, pages: res.data.pages });
@@ -66,6 +68,7 @@ const ProductList = () => {
         console.error("Lỗi kết nối API:", error);
       } finally {
         setLoading(false);
+        flagReset = false;
       }
     };
     fetchProducts();
@@ -84,8 +87,18 @@ const ProductList = () => {
     setPage(1);
   };
 
+  const onToggleFavorite = (productId, isFav) => {
+    setProducts(prevProducts => 
+    prevProducts.map(product => 
+      product.id === productId 
+        ? { ...product, is_favorite: isFav } 
+        : product
+    )
+  );
+  };
   const isFiltering = appliedFilters.rating !== 0 || appliedFilters.category !== ALL_CATEGORY_KEY || appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '';
 
+  console.log("product", products)
   return (
     <div className="bg-white min-h-screen pb-20 font-sans text-slate-800">
       <div className="max-w-[1440px] mx-auto px-4 lg:px-40 py-10">
@@ -202,7 +215,7 @@ const ProductList = () => {
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-10">
                   {products.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard key={product.id} product={product} onToggleFavorite={onToggleFavorite}  />
                   ))}
                 </div>
 

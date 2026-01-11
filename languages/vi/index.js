@@ -6,7 +6,7 @@ import cart from "./cart";
 import categoryPage from "./categoryPage";
 import checkout from "./checkout";
 import favoritePage from "./favoritePage";
-import fogotPassword from "./fogotPassword";
+import forgotPassword from "./fogotPassword";
 import home from "./home";
 import ordersPage from "./ordersPage";
 import productCard from "./ProductCard";
@@ -27,7 +27,7 @@ const vi = {
     categoryPage,
     checkout,
     favoritePage,
-    fogotPassword,
+    forgotPassword,
     header,
     footer,
     home,
