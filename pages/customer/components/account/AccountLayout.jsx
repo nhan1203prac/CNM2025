@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-
-
+import { untils } from '../../../../languages/untils';
 
 const AccountLayout = () => {
   const {logout } = useAuth();
@@ -16,19 +15,19 @@ const AccountLayout = () => {
     return <Navigate to="/login" replace state={{from: pathname}}/>
   }
   const menuItems = [
-    { label: 'Tổng quan', icon: 'dashboard', path: '/account' },
-    { label: 'Thông tin tài khoản', icon: 'person', path: '/account/profile' },
-    { label: 'Quản lý địa chỉ', icon: 'location_on', path: '/account/addresses' },
-    { label: 'Thông báo', icon: 'notifications', path: '/account/notification'},
+    { label: (untils.mess("accountLayout.menu.dashboard")), icon: 'dashboard', path: '/account' },
+    { label: (untils.mess("accountLayout.menu.profile")), icon: 'person', path: '/account/profile' },
+    { label: (untils.mess("accountLayout.menu.addresses")), icon: 'location_on', path: '/account/addresses' },
+    { label: (untils.mess("accountLayout.menu.notifications")), icon: 'notifications', path: '/account/notification'},
   ];
 
   const currentMenu = menuItems.find(item => item.path === pathname);
-  const labelPage = currentMenu?.label || 'Tổng quan';
+  const labelPage = currentMenu?.label || (untils.mess("accountLayout.menu.dashboard"));
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 lg:px-40 py-8 w-full">
       <nav className="flex items-center text-sm text-gray-500 mb-6">
-        <Link className="hover:text-primary transition-colors" to="/">Trang chủ</Link>
+        <Link className="hover:text-primary transition-colors" to="/">{untils.mess("accountLayout.home")}</Link>
         <span className="material-symbols-outlined text-sm mx-2">chevron_right</span>
         <span className="text-[#181411] font-medium">{labelPage}</span>
       </nav>
@@ -70,7 +69,7 @@ const AccountLayout = () => {
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:text-red-500 font-medium transition-colors w-full"
                   >
                     <span className="material-symbols-outlined text-[20px]">logout</span>
-                    <span>Đăng xuất</span>
+                    <span>{untils.mess("accountLayout.menu.logout")}</span>
                   </button>
                 </li>
               </ul>

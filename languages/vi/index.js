@@ -15,6 +15,10 @@ import productList from "./productList";
 import signup from "./signup";
 import footer from "./footer";
 import header from "./header";
+import addresses from "./addresses";
+import dashboard from "./dashboard";
+import notifications from "./notifications";
+import profile from "./profile";
 
 const vi = {
     accountLayout,
@@ -33,7 +37,11 @@ const vi = {
     productDetail,
     productList,
     signup,
-    verifyEmail
+    verifyEmail,
+    addresses,
+    dashboard,
+    notifications,
+    profile
 }
 
 export default vi

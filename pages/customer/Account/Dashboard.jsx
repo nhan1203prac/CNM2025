@@ -3,8 +3,12 @@ import { Loader2, ShoppingBag, CheckCircle, Heart } from "lucide-react";
 import baseAPI from "../../api/baseApi";
 import ProductCard from "../components/common/ProductCard";
 import { Link } from "react-router-dom";
+// 1. Import untils và Context
+import { untils } from "../../../languages/untils";
 
 const Dashboard = () => {
+  // 2. Kích hoạt hook
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -48,38 +52,40 @@ const Dashboard = () => {
     return (
       <div className="flex flex-col items-center justify-center py-20 w-full">
         <Loader2 className="animate-spin text-primary mb-2" size={40} />
-        <p className="text-sm text-gray-500 font-medium">Đang tải dữ liệu...</p>
+        <p className="text-sm text-gray-500 font-medium">
+            {untils.mess("dashboard.loading")}
+        </p>
       </div>
     );
 
   if (!data)
     return (
       <div className="p-10 text-center text-gray-500">
-        Không có dữ liệu hiển thị.
+        {untils.mess("dashboard.no_data")}
       </div>
     );
 
   const { stats, recent_orders, wishlist } = data;
-  console.log("wishlist", wishlist);
+  
   return (
     <div className="flex flex-col gap-6">
       {/* STATS CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard
           count={stats?.processing_orders || 0}
-          label="Đơn hàng đang xử lý"
+          label={untils.mess("dashboard.stats.processing")}
           icon={<ShoppingBag size={24} />}
           color="blue"
         />
         <StatCard
           count={stats?.completed_orders || 0}
-          label="Đơn hàng thành công"
+          label={untils.mess("dashboard.stats.completed")}
           icon={<CheckCircle size={24} />}
           color="green"
         />
         <StatCard
           count={stats?.wishlist_count || 0}
-          label="Sản phẩm yêu thích"
+          label={untils.mess("dashboard.stats.wishlist")}
           icon={<Heart size={24} />}
           color="red"
         />
@@ -88,20 +94,22 @@ const Dashboard = () => {
       {/* RECENT ORDERS */}
       <section className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-[#181411]">Đơn hàng gần đây</h2>
+          <h2 className="text-lg font-bold text-[#181411]">
+            {untils.mess("dashboard.recent_orders.title")}
+          </h2>
           <Link to="/orders" className="text-primary text-sm font-bold hover:underline">
-            Xem tất cả
+            {untils.mess("dashboard.recent_orders.view_all")}
           </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="text-gray-500 bg-gray-50 border-b border-gray-100 uppercase text-[11px] tracking-wider">
               <tr>
-                <th className="px-6 py-4 font-bold">Mã đơn hàng</th>
-                <th className="px-6 py-4 font-bold">Ngày đặt</th>
-                <th className="px-6 py-4 font-bold">Sản phẩm</th>
-                <th className="px-6 py-4 font-bold">Tổng tiền</th>
-                <th className="px-6 py-4 font-bold">Trạng thái</th>
+                <th className="px-6 py-4 font-bold">{untils.mess("dashboard.recent_orders.table.id")}</th>
+                <th className="px-6 py-4 font-bold">{untils.mess("dashboard.recent_orders.table.date")}</th>
+                <th className="px-6 py-4 font-bold">{untils.mess("dashboard.recent_orders.table.product")}</th>
+                <th className="px-6 py-4 font-bold">{untils.mess("dashboard.recent_orders.table.total")}</th>
+                <th className="px-6 py-4 font-bold">{untils.mess("dashboard.recent_orders.table.status")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -116,9 +124,9 @@ const Dashboard = () => {
                     </td>
                     <td className="px-6 py-4 text-gray-500">{order.date}</td>
                     <td className="px-6 py-4 text-gray-500 max-w-[200px] truncate">
-                      {order ? order.first_item_name : "Sản phẩm không tên"}
+                      {order ? order.first_item_name : untils.mess("dashboard.recent_orders.product_fallback")}
                       {order.items_count > 1 &&
-                        ` và ${order.items_count - 1} khác`}
+                        ` ${untils.mess("dashboard.recent_orders.and")} ${order.items_count - 1} ${untils.mess("dashboard.recent_orders.others")}`}
                     </td>
                     <td className="px-6 py-4 font-black text-primary">
                       {new Intl.NumberFormat("vi-VN", {
@@ -134,6 +142,7 @@ const Dashboard = () => {
                             : "bg-blue-100 text-blue-700"
                         }`}
                       >
+                        {/* Lưu ý: Nếu status từ API là tiếng Việt cứng, bạn có thể cần map nó tương tự như ProductList */}
                         {order.status}
                       </span>
                     </td>
@@ -145,7 +154,7 @@ const Dashboard = () => {
                     colSpan="6"
                     className="px-6 py-10 text-center text-gray-400"
                   >
-                    Bạn chưa có đơn hàng nào.
+                    {untils.mess("dashboard.recent_orders.empty")}
                   </td>
                 </tr>
               )}
@@ -158,10 +167,10 @@ const Dashboard = () => {
       <section className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-[#181411]">
-            Sản phẩm yêu thích
+            {untils.mess("dashboard.wishlist.title")}
           </h2>
           <Link to={"/favorites"} className="text-primary text-sm font-bold hover:underline">
-            Xem tất cả
+            {untils.mess("dashboard.wishlist.view_all")}
           </Link>
         </div>
         {wishlist && wishlist.length > 0 ? (
@@ -176,7 +185,7 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="py-10 text-center text-gray-400 border-2 border-dashed border-gray-100 rounded-xl">
-            Danh sách yêu thích đang trống.
+            {untils.mess("dashboard.wishlist.empty")}
           </div>
         )}
       </section>
