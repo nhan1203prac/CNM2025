@@ -1,5 +1,5 @@
 const header = {
-  app_name: "ShopMới",
+  app_name: "Shop",
 
   search_placeholder: "Tìm kiếm sản phẩm...",
 

@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { useCart } from "../../../context/CartContext";
 import { useAuth } from "../../../context/AuthContext";
-// Đảm bảo đường dẫn import đúng tới file untils mới sửa
 import { untils } from "../../../../languages/untils"; 
 
 const Header = () => {
@@ -20,13 +19,11 @@ const Header = () => {
   const [openUserMenu, setOpenUserMenu] = useState(false);
   const userMenuRef = useRef(null);
 
-  // Khởi tạo state lang bằng giá trị hiện tại từ untils
   const [lang, setLang] = useState(untils.getLang());
 
   const changeLang = (l) => {
     untils.setLang(l);
     setLang(l);
-    // Reload để UI cập nhật lại toàn bộ text mới
     window.location.reload();
   };
   console.log(untils.mess("header.nav.orders"))
@@ -47,7 +44,6 @@ const Header = () => {
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-[#f4f2f0] shadow-sm">
       <div className="px-4 lg:px-40 py-2">
         <div className="flex items-center justify-between py-3 gap-4">
-          {/* Logo & App Name */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="size-8 text-primary">
               <svg viewBox="0 0 48 48" fill="currentColor">
@@ -59,7 +55,6 @@ const Header = () => {
             </h2>
           </Link>
 
-          {/* Search Bar (Desktop) */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <div className="flex w-full items-center rounded-lg h-10 bg-[#f4f2f0] focus-within:ring-2 focus-within:ring-primary/50">
               <div className="pl-4 pr-2 text-[#897261]">
@@ -73,7 +68,6 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-3 md:gap-4">
-            {/* Navigation Links */}
             <nav className="hidden lg:flex items-center gap-6 mr-2">
               <Link
                 to="/"

@@ -27,7 +27,7 @@ const cart = {
       shipping: "Vận chuyển",
       free_shipping: "Miễn phí",
       total_payment: "Tổng thanh toán",
-      checkout_btn: "Tiến hành thanh toán",
+      checkout_btn: "Tạo đơn hàng",
       note: "Sẵn sàng giao hàng đến tận tay bạn"
     }
 };

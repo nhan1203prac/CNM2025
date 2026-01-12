@@ -1,5 +1,5 @@
 const header = {
-  app_name: "ShopMoi",
+  app_name: "Shop",
 
   search_placeholder: "Search products...",
 

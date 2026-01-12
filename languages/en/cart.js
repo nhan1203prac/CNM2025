@@ -27,7 +27,7 @@ const cart = {
       shipping: "Shipping",
       free_shipping: "Free",
       total_payment: "Total Payment",
-      checkout_btn: "Proceed to Checkout",
+      checkout_btn: "Create Order",
       note: "Ready to deliver to your doorstep"
     }
 };
