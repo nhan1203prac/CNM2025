@@ -26,6 +26,7 @@ export const ProductsPage = () => {
     colors: [],
     storages: [],
     sizes: [],
+    is_active:true,
   });
 
   const [search, setSearch] = useState("");
@@ -103,6 +104,7 @@ export const ProductsPage = () => {
         colors: product.colors || [],
         storages: product.storages || [],
         sizes: product.sizes || [],
+        is_active: product.is_active ?? true,
       };
       setSelectedProduct(pData);
       setInputStrings({
@@ -113,7 +115,7 @@ export const ProductsPage = () => {
     } else {
       setSelectedProduct({
         name: "", price: 0, original_price: 0, stock: 0, category_id: "",
-        main_image: "", images: [], description: "", colors: [], storages: [], sizes: [],
+        main_image: "", images: [], description: "", colors: [], storages: [], sizes: [], is_active:true
       });
       setInputStrings({ colors: "", storages: "", sizes: "" });
     }
@@ -143,14 +145,14 @@ export const ProductsPage = () => {
     } catch (err) { toast.error("Lỗi khi lưu", { id: ld }); }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Xác nhận xóa sản phẩm?")) return;
-    try {
-      await baseAPI.delete(`/admin/products/${id}`);
-      toast.success("Đã xóa");
-      initData();
-    } catch { toast.error("Lỗi xóa"); }
-  };
+  // const handleDelete = async (id) => {
+  //   if (!window.confirm("Xác nhận xóa sản phẩm?")) return;
+  //   try {
+  //     await baseAPI.delete(`/admin/products/${id}`);
+  //     toast.success("Đã xóa");
+  //     initData();
+  //   } catch { toast.error("Lỗi xóa"); }
+  // };
 
   return (
     <div className="p-6 bg-white min-h-screen text-black font-sans">
@@ -184,6 +186,7 @@ export const ProductsPage = () => {
               <th className="p-4 border-r">Tên sản phẩm</th>
               <th className="p-4 border-r text-center w-20">Kho</th>
               <th className="p-4 border-r w-32">Giá niêm yết</th>
+              <th className="p-4 border-r text-center w-32">Trạng thái</th>
               <th className="p-4 text-right w-24">Lệnh</th>
             </tr>
           </thead>
@@ -196,10 +199,14 @@ export const ProductsPage = () => {
                 <td className="p-4 border-r border-gray-100 text-base font-bold uppercase">{p.name}</td>
                 <td className="p-4 border-r border-gray-100 text-center text-base">{p.stock}</td>
                 <td className="p-4 border-r border-gray-100 text-base font-bold">{Number(p.price).toLocaleString()}đ</td>
+                <td className="p-4 border-r border-gray-100 text-center">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${p.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {p.is_active ? 'Hiển thị' : 'Đang ẩn'}
+                  </span>
+                </td>
                 <td className="p-4 text-right">
                   <div className="flex justify-end gap-1">
                     <button onClick={() => handleOpenDrawer("edit", p)} className="p-2 border border-gray-200 hover:bg-black hover:text-white transition-all rounded-lg"><Edit3 size={16} /></button>
-                    <button onClick={() => handleDelete(p.id)} className="p-2 border border-gray-200 text-red-600 hover:bg-red-600 hover:text-white transition-all rounded-lg"><Trash2 size={16} /></button>
                   </div>
                 </td>
               </tr>
@@ -211,22 +218,36 @@ export const ProductsPage = () => {
       {/* DRAWER */}
       {showDrawer && (
         <div className="fixed inset-0 z-[100] flex justify-end">
-          <div className="absolute inset-0 bg-black/20" onClick={() => setShowDrawer(false)} />
-          <div className="relative w-full md:w-[500px] bg-white h-full flex flex-col border-l-2 border-black animate-in slide-in-from-right duration-200">
+          <div className="absolute inset-0" onClick={() => setShowDrawer(false)} />
+          <div className="relative w-full md:w-[500px] bg-white h-full flex flex-col   animate-in slide-in-from-right duration-200">
             <div className="p-5 border-b-2 border-black flex justify-between items-center bg-gray-50">
               <h2 className="font-bold uppercase text-base">{editMode === "create" ? "Thêm mới sản phẩm" : "Cập nhật sản phẩm"}</h2>
               <X className="cursor-pointer text-black" size={24} onClick={() => setShowDrawer(false)} />
             </div>
 
             <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-              
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-black/5">
+                <div>
+                  <p className="font-black text-sm uppercase">Kích hoạt hiển thị</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase">Bật để khách hàng có thể thấy sản phẩm này</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={selectedProduct.is_active}
+                    onChange={(e) => setSelectedProduct({ ...selectedProduct, is_active: e.target.checked })}
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                </label>
+              </div>
               {/* IMAGE SECTION - TÁCH BIỆT MAIN VÀ SUB */}
               <div className="space-y-6">
                 {/* ẢNH CHÍNH */}
                 <div className="space-y-2">
                   <label className="text-sm font-black uppercase text-black">Ảnh đại diện (Main Image)</label>
                   <div className="flex items-center gap-4">
-                    <div className="w-24 h-24 border-2 border-black flex items-center justify-center bg-gray-50 relative group rounded-xl overflow-hidden">
+                    <div className="w-24 h-24 border-2 flex items-center justify-center bg-gray-50 relative group rounded-xl overflow-hidden">
                       {selectedProduct.main_image ? <img src={selectedProduct.main_image} className="w-full h-full object-cover" /> : <Camera className="text-gray-400" size={32} />}
                       <button onClick={() => mainImageInputRef.current.click()} className="absolute inset-0 bg-black/60 text-white opacity-0 group-hover:opacity-100 text-xs font-bold uppercase">Sửa</button>
                     </div>
@@ -256,56 +277,56 @@ export const ProductsPage = () => {
               <div className="space-y-6 pt-4 border-t-2 border-gray-100">
                 <div className="space-y-2">
                   <label className="text-sm font-black uppercase text-black">Tên sản phẩm</label>
-                  <input className="w-full border-2 border-gray-300 h-12 px-4 text-base font-bold outline-none focus:border-black uppercase" value={selectedProduct.name} onChange={e => setSelectedProduct({...selectedProduct, name: e.target.value})} />
+                  <input className="w-full border-2 border-gray-300 h-12 px-4 text-base outline-none  uppercase" value={selectedProduct.name} onChange={e => setSelectedProduct({...selectedProduct, name: e.target.value})} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-black uppercase text-black">Giá bán (đ)</label>
-                    <input type="number" className="w-full border-2 border-gray-300 h-12 px-4 text-base font-bold outline-none focus:border-black" value={selectedProduct.price} onChange={e => setSelectedProduct({...selectedProduct, price: e.target.value})} />
+                    <input type="number" className="w-full border-2 border-gray-300 h-12 px-4 text-base  outline-none " value={selectedProduct.price} onChange={e => setSelectedProduct({...selectedProduct, price: e.target.value})} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-black uppercase text-black">Số lượng kho</label>
-                    <input type="number" className="w-full border-2 border-gray-300 h-12 px-4 text-base font-bold outline-none focus:border-black" value={selectedProduct.stock} onChange={e => setSelectedProduct({...selectedProduct, stock: e.target.value})} />
+                    <input type="number" className="w-full border-2 border-gray-300 h-12 px-4 text-base  outline-none " value={selectedProduct.stock} onChange={e => setSelectedProduct({...selectedProduct, stock: e.target.value})} />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-black uppercase text-black">Danh mục</label>
-                  <select className="w-full border-2 border-gray-300 h-12 px-4 text-base font-bold outline-none focus:border-black uppercase cursor-pointer" value={selectedProduct.category_id} onChange={e => setSelectedProduct({...selectedProduct, category_id: e.target.value})}>
+                  <select className="w-full border-2 border-gray-300 h-12 px-4 text-base  outline-none uppercase cursor-pointer" value={selectedProduct.category_id} onChange={e => setSelectedProduct({...selectedProduct, category_id: e.target.value})}>
                     <option value="">Chọn loại</option>
                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-black uppercase text-black">Mô tả sản phẩm</label>
-                  <textarea className="w-full border-2 border-gray-300 p-4 text-base font-medium outline-none focus:border-black min-h-[120px]" value={selectedProduct.description} onChange={e => setSelectedProduct({...selectedProduct, description: e.target.value})} />
+                  <textarea className="w-full border-2 border-gray-300 p-4 text-base font-medium outline-none  min-h-[120px]" value={selectedProduct.description} onChange={e => setSelectedProduct({...selectedProduct, description: e.target.value})} />
                 </div>
               </div>
 
               {/* VARIANTS */}
-              <div className="space-y-6 pt-6 border-t-2 border-black bg-gray-50 p-4 rounded-xl">
-                <p className="text-sm font-black uppercase text-black">Đặc điểm biến thể</p>
+              <div className="space-y-6 pt-6 border-black bg-gray-50 p-4 rounded-xl">
+                <p className="text-sm font-black uppercase text-black">Đặc điểm</p>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <label className="text-sm font-black uppercase text-black">Màu sắc</label>
-                    <input className="w-full border-2 border-gray-300 h-12 px-4 text-sm font-bold outline-none focus:border-black" placeholder="Đen, Trắng..." value={inputStrings.colors} onChange={e => handleTyping("colors", e.target.value)} />
+                    <input className="w-full border-2 border-gray-300 h-12 px-4 text-sm  outline-none " placeholder="Đen, Trắng..." value={inputStrings.colors} onChange={e => handleTyping("colors", e.target.value)} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-black uppercase text-black">Dung lượng</label>
-                      <input className="w-full border-2 border-gray-300 h-12 px-4 text-sm font-bold outline-none focus:border-black" placeholder="128GB, 256GB..." value={inputStrings.storages} onChange={e => handleTyping("storages", e.target.value)} />
+                      <input className="w-full border-2 border-gray-300 h-12 px-4 text-sm  outline-none " placeholder="128GB, 256GB..." value={inputStrings.storages} onChange={e => handleTyping("storages", e.target.value)} />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-black uppercase text-black">Kích cỡ</label>
-                      <input className="w-full border-2 border-gray-300 h-12 px-4 text-sm font-bold outline-none focus:border-black" placeholder="S, M, L..." value={inputStrings.sizes} onChange={e => handleTyping("sizes", e.target.value)} />
+                      <input className="w-full border-2 border-gray-300 h-12 px-4 text-sm  outline-none " placeholder="S, M, L..." value={inputStrings.sizes} onChange={e => handleTyping("sizes", e.target.value)} />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-6 border-t-2 border-black flex gap-4 bg-gray-50">
-              <button onClick={() => setShowDrawer(false)} className="flex-1 py-4 border-2 border-black text-sm font-bold uppercase hover:bg-black hover:text-white transition-all">Hủy bỏ</button>
-              <button onClick={handleSave} className="flex-[2] py-4 bg-black text-white text-sm font-bold uppercase hover:bg-gray-800 transition-all shadow-lg">Lưu dữ liệu</button>
+            <div className="p-6  flex gap-4 bg-gray-50">
+              <button onClick={() => setShowDrawer(false)} className="flex-1 border rounded-xl py-3">Hủy bỏ</button>
+              <button onClick={handleSave} className="flex-[2] bg-primary text-white rounded-xl py-3">Lưu dữ liệu</button>
             </div>
           </div>
         </div>

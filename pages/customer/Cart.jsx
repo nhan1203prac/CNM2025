@@ -1,26 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { Loader2, Trash2, Plus, Minus, ArrowRight, ShoppingBag } from 'lucide-react';
+import { Loader2, Trash2, Plus, Minus, ArrowRight, ShoppingBag, Truck, CreditCard } from 'lucide-react';
 import { untils } from "../../languages/untils"; 
 import baseAPI from '../api/baseApi';
 import toast from 'react-hot-toast';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckoutForm from './components/checkout/CheckoutForm';
+import { loadStripe } from '@stripe/stripe-js';
 
 const Cart = () => {
 
   const { cart, loading, removeFromCart, addToCart, subtotal, totalItems } = useCart();
+  const [paymentMethod, setPaymentMethod] = useState('COD')
+  const [clientSecret, setClientSecret] = useState(null);
+  const [showStripeModal, setShowStripeModal] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState(null);
+
   const navigate = useNavigate()
+
+  const stripePromise = loadStripe("pk_test_51P5IjLP1PtyodjX47SnvBY3JoM9TeTPxLhuM8gmzWXCT8zGei2uAIg9dj3Jl01FAPtVmGgHNLMAzYv92dmEa7y5O00Icax3DvC");
   const handleCheckout = async () => {
     try {
       toast.loading(untils.mess("cart.processing"));
       
-      const res = await baseAPI.post("/orders/create");
+      const resOrder = await baseAPI.post("/orders/create");
+      const orderId = resOrder.data.order_id;
+      setCreatedOrderId(orderId);
       
       toast.dismiss();
-      toast.success(untils.mess("cart.create_success"));
 
-  
-      navigate("/orders"); 
+      if (paymentMethod === 'STRIPE') {
+        toast.loading(untils.mess("ordersPage.conectingPaymentGateway"));
+        
+        const resPayment = await baseAPI.post(`/payment/intents/${orderId}`);
+        setClientSecret(resPayment.data.client_secret);
+        
+        setShowStripeModal(true);
+        toast.dismiss();
+      } else {
+        toast.success(untils.mess("cart.create_success"));
+        navigate("/orders");
+      }
       
     } catch (error) {
       toast.dismiss();
@@ -69,7 +90,7 @@ const Cart = () => {
             {untils.mess("header.nav.home")}
           </Link>
           <span className="mx-3">/</span>
-          <span className="text-slate-900">{untils.mess("cart.breadcrumb")}</span>
+          <span className="text-[#181411] font-medium">{untils.mess("cart.breadcrumb")}</span>
         </nav>
         <h1 className="text-4xl font-black text-slate-900 uppercase italic">
           {untils.mess("cart.title")} 
@@ -174,32 +195,66 @@ const Cart = () => {
               <h3 className="text-xl font-black uppercase italic mb-8 tracking-tight text-slate-900 border-b pb-4">
                 {untils.mess("cart.summary.title")}
               </h3>
-              
+
+              <div className="mb-8">
+                <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">
+                  Phương thức thanh toán
+                </p>
+                <div className="grid grid-cols-1 gap-3">
+                  <label 
+                    className={`flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                      paymentMethod === 'COD' ? 'border-primary bg-primary/5' : 'border-slate-100 hover:border-slate-200'
+                    }`}
+                  >
+                    <input 
+                      type="radio" 
+                      className="hidden" 
+                      name="payment" 
+                      value="COD" 
+                      checked={paymentMethod === 'COD'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
+                    <div className={`p-2 rounded-xl ${paymentMethod === 'COD' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'}`}>
+                      <Truck size={20} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black uppercase ">Ship COD</p>
+                      <p className="text-[10px] text-slate-500 font-bold">Thanh toán khi nhận hàng</p>
+                    </div>
+                  </label>
+
+                  {/* Option Online Payment */}
+                  <label 
+                    className={`flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                      paymentMethod === 'STRIPE' ? 'border-primary bg-primary/5' : 'border-slate-100 hover:border-slate-200'
+                    }`}
+                  >
+                    <input 
+                      type="radio" 
+                      className="hidden" 
+                      name="payment" 
+                      value="STRIPE" 
+                      checked={paymentMethod === 'STRIPE'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
+                    <div className={`p-2 rounded-xl ${paymentMethod === 'STRIPE' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'}`}>
+                      <CreditCard size={20} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black uppercase ">Thẻ / Ngân hàng</p>
+                      <p className="text-[10px] text-slate-500 font-bold">Thanh toán qua Stripe</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Phần tính tiền giữ nguyên */}
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between items-center">
                   <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">
-                    {untils.mess("cart.summary.subtotal")} ({totalItems} {untils.mess("cart.items_count")})
+                    {untils.mess("cart.summary.subtotal")} ({totalItems})
                   </span>
                   <span className="font-bold text-slate-900">{formatCurrency(subtotal)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">
-                    {untils.mess("cart.summary.shipping")}
-                  </span>
-                  <span className="text-[11px] font-black uppercase text-emerald-500 tracking-widest bg-emerald-50 px-3 py-1 rounded-full">
-                    {untils.mess("cart.summary.free_shipping")}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="pt-6 border-t border-dashed border-slate-200 mb-8">
-                <div className="flex justify-between items-end">
-                  <span className="text-[11px] font-black uppercase tracking-widest text-slate-900">
-                    {untils.mess("cart.summary.total_payment")}
-                  </span>
-                  <span className="text-3xl font-black text-primary italic tracking-tighter">
-                    {formatCurrency(subtotal)}
-                  </span>
                 </div>
               </div>
 
@@ -208,7 +263,7 @@ const Cart = () => {
                 className="w-full bg-slate-900 hover:bg-primary text-white py-5 rounded-2xl flex items-center justify-center gap-3 transition-all group shadow-xl shadow-slate-200"
               >
                 <span className="text-xs font-black uppercase tracking-[2px]">
-                  {untils.mess("cart.summary.checkout_btn")}
+                  {paymentMethod === 'COD' ? 'Xác nhận đặt hàng' : 'Tiến hành thanh toán'}
                 </span>
                 <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
               </button>
@@ -220,6 +275,31 @@ const Cart = () => {
           </div>
         </div>
       </section>
+
+      {showStripeModal && clientSecret && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white p-8 rounded-3xl w-full max-w-md animate-in fade-in zoom-in duration-200">
+            <h2 className="text-xl font-bold mb-4">{untils.mess("ordersPage.paywithcard")}</h2>
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <CheckoutForm 
+                clientSecret={clientSecret} 
+                orderId={createdOrderId}
+                onOrderPaid={() => {
+                  setShowStripeModal(false);
+                  toast.success(untils.mess("cart.payment_success"));
+                  navigate("/orders"); 
+                }} 
+              />
+            </Elements>
+            <button 
+              onClick={() => setShowStripeModal(false)} 
+              className="mt-4 text-slate-400 w-full text-center text-sm font-bold uppercase tracking-widest"
+            >
+              {untils.mess("ordersPage.detail_popup.btn_close")}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
