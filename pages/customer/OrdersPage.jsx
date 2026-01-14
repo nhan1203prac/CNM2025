@@ -31,6 +31,7 @@ const OrdersPage = () => {
     try {
       setLoading(true);
       const res = await baseAPI.get("/orders");
+      console.log("order ", res.data)
       setOrders(res.data);
     } catch (error) {
       toast.error(untils.mess("ordersPage.error_load"));
@@ -151,7 +152,7 @@ const OrdersPage = () => {
                       </span>
                     )}
                     <span className="text-xs font-medium text-slate-400 ml-2">
-                        {new Date(order.created_at).toLocaleDateString("vi-VN")}
+                      {new Date(order.created_at).toLocaleDateString("vi-VN")}
                     </span>
                   </div>
                 </div>
@@ -173,7 +174,8 @@ const OrdersPage = () => {
                         </h4>
                         <div className="flex justify-between items-center mt-2">
                           <span className="text-xs font-medium text-slate-400">
-                            {untils.mess("ordersPage.card.quantity")}: x{item.quantity}
+                            {untils.mess("ordersPage.card.quantity")}: x
+                            {item.quantity}
                           </span>
                           <span className="font-bold text-slate-900">
                             {formatCurrency(item.price_at_purchase)}
@@ -189,9 +191,29 @@ const OrdersPage = () => {
                       {untils.mess("ordersPage.card.view_more_suffix")}
                     </p>
                   )}
+
+                  {order.expected_delivery_date && (
+                    <div className="mt-4 flex items-center gap-3 bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
+                      <div className="bg-white p-2 rounded-lg shadow-sm text-blue-600">
+                        <Truck size={18} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-tight leading-none mb-1">
+                          Dự kiến giao hàng
+                        </p>
+                        <p className="text-sm font-bold text-slate-700 leading-none">
+                          {order.expected_delivery_date}
+                          {order.delivery_deadline && (
+                            <span className="text-slate-400 font-medium ml-2 text-[11px]">
+                              (Hạn cuối: {order.delivery_deadline})
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Footer đơn hàng */}
                 <div className="mt-8 pt-6 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
                   <div className="text-center md:text-left">
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">
@@ -202,7 +224,6 @@ const OrdersPage = () => {
                     </span>
                   </div>
                   <div className="flex gap-3 w-full md:w-auto">
-                    {/* Nút thanh toán đã được gỡ bỏ vì logic chuyển sang Cart */}
                     <button
                       onClick={() => handleOpenDetail(order)}
                       className="w-full md:w-auto px-10 py-3 rounded-xl bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
@@ -232,7 +253,8 @@ const OrdersPage = () => {
                   {untils.mess("ordersPage.detail_popup.title")}
                 </h2>
                 <p className="text-xs font-medium text-slate-400 mt-1">
-                  {untils.mess("ordersPage.detail_popup.order_id")}: #{selectedOrder.id}
+                  {untils.mess("ordersPage.detail_popup.order_id")}: #
+                  {selectedOrder.id}
                 </p>
               </div>
               <button
@@ -261,8 +283,11 @@ const OrdersPage = () => {
                       </h4>
                       <p className="text-[11px] font-medium text-slate-500 mt-1">
                         {untils.mess("ordersPage.detail_popup.variant")}:{" "}
-                        {item.selected_size || untils.mess("ordersPage.detail_popup.default")} /{" "}
-                        {item.selected_color || untils.mess("ordersPage.detail_popup.default")}
+                        {item.selected_size ||
+                          untils.mess("ordersPage.detail_popup.default")}{" "}
+                        /{" "}
+                        {item.selected_color ||
+                          untils.mess("ordersPage.detail_popup.default")}
                       </p>
                       <div className="flex justify-between items-center mt-2">
                         <span className="font-bold text-primary text-sm">
@@ -284,10 +309,12 @@ const OrdersPage = () => {
                 </div>
                 <div className="flex justify-between text-xs font-medium opacity-70">
                   <span>{untils.mess("ordersPage.detail_popup.shipping")}</span>
-                  <span>{untils.mess("ordersPage.detail_popup.free")}</span>
+                  <span>{formatCurrency(selectedOrder.shipping_fee)}</span>
                 </div>
                 <div className="pt-3 border-t border-white/10 flex justify-between items-center">
-                  <span className="font-bold">{untils.mess("ordersPage.detail_popup.total")}</span>
+                  <span className="font-bold">
+                    {untils.mess("ordersPage.detail_popup.total")}
+                  </span>
                   <span className="text-xl font-bold text-primary">
                     {formatCurrency(selectedOrder.total_amount)}
                   </span>
