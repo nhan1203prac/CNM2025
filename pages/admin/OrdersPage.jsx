@@ -1,31 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Filter, 
-  Edit3, 
-  X, 
-  CheckCircle2, 
-  Clock, 
-  Truck, 
-  XCircle, 
+import React, { useState, useEffect } from "react";
+import {
+  Search,
+  Filter,
+  Edit3,
+  X,
+  CheckCircle2,
+  Clock,
+  Truck,
+  XCircle,
   RefreshCcw,
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
   PackageSearch,
-  Loader2
-} from 'lucide-react';
-import baseAPI from '../api/baseApi';
-import toast from 'react-hot-toast';
+  Loader2,
+  Trash2,
+} from "lucide-react";
+import baseAPI from "../api/baseApi";
+import toast from "react-hot-toast";
 
 const PaymentBadge = ({ status }) => {
   if (!status) return null;
   const config = {
-    'PAID': { color: 'bg-green-100 text-green-700', text: 'Đã thanh toán' },
-    'PENDING': { color: 'bg-yellow-100 text-yellow-700', text: 'Chờ thanh toán' },
-    'REFUNDED': { color: 'bg-slate-100 text-slate-700', text: 'Hoàn tiền' },
+    PAID: { color: "bg-green-100 text-green-700", text: "Đã thanh toán" },
+    PENDING: { color: "bg-yellow-100 text-yellow-700", text: "Chờ thanh toán" },
+    REFUNDED: { color: "bg-slate-100 text-slate-700", text: "Hoàn tiền" },
   };
-  const { color, text } = config[status] || config['PENDING'];
+  const { color, text } = config[status] || config["PENDING"];
   return (
     <span className={`px-3 py-1 rounded-full text-xs font-bold ${color}`}>
       {text}
@@ -36,12 +37,12 @@ const PaymentBadge = ({ status }) => {
 const ShippingBadge = ({ status }) => {
   if (!status) return null;
   const config = {
-    'PENDING': { color: 'bg-slate-100 text-slate-700', text: 'Chờ xử lý' },
-    'SHIPPING': { color: 'bg-blue-100 text-blue-700', text: 'Đang giao' },
-    'DELIVERED': { color: 'bg-green-100 text-green-700', text: 'Đã giao' },
-    'CANCELLED': { color: 'bg-red-100 text-red-700', text: 'Đã hủy' },
+    PENDING: { color: "bg-slate-100 text-slate-700", text: "Chờ xử lý" },
+    SHIPPING: { color: "bg-blue-100 text-blue-700", text: "Đang giao" },
+    DELIVERED: { color: "bg-green-100 text-green-700", text: "Đã giao" },
+    CANCELLED: { color: "bg-red-100 text-red-700", text: "Đã hủy" },
   };
-  const { color, text } = config[status] || config['PENDING'];
+  const { color, text } = config[status] || config["PENDING"];
   return (
     <span className={`px-3 py-1 rounded-full text-xs font-bold ${color}`}>
       {text}
@@ -54,9 +55,9 @@ export const OrdersPage = () => {
   const [loading, setLoading] = useState(true);
   const [showDrawer, setShowDrawer] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -64,8 +65,8 @@ export const OrdersPage = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await baseAPI.get('/admin/orders', {
-        params: { page, size: 10, search, status: statusFilter }
+      const response = await baseAPI.get("/admin/orders", {
+        params: { page, size: 10, search, status: statusFilter },
       });
       setOrders(response.data.items);
       setTotalPages(response.data.pages);
@@ -77,20 +78,43 @@ export const OrdersPage = () => {
     }
   };
 
-  useEffect(() => { fetchOrders(); }, [page, statusFilter]);
+  useEffect(() => {
+    fetchOrders();
+  }, [page, statusFilter]);
 
   const handleUpdateStatus = async () => {
     const loadId = toast.loading("Đang lưu...");
     try {
-      await baseAPI.patch(`/admin/orders/${selectedOrder.id}/status`, { 
+      await baseAPI.patch(`/admin/orders/${selectedOrder.id}/status`, {
         shippingStatus: selectedOrder.shippingStatus,
-        paymentStatus: selectedOrder.paymentStatus 
+        paymentStatus: selectedOrder.paymentStatus,
       });
       setShowDrawer(false);
       fetchOrders();
       toast.success("Cập nhật thành công", { id: loadId });
     } catch (error) {
       toast.error("Cập nhật thất bại", { id: loadId });
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (
+      !window.confirm(
+        `Bạn có chắc chắn muốn xóa đơn hàng #${orderId}? Hành động này không thể hoàn tác.`
+      )
+    ) {
+      return;
+    }
+
+    const loadId = toast.loading("Đang xóa đơn hàng...");
+    try {
+      await baseAPI.delete(`/admin/orders/${orderId}`);
+
+      toast.success("Xóa đơn hàng thành công", { id: loadId });
+      fetchOrders();
+    } catch (error) {
+      const errorMsg = error.response?.data?.detail || "Xóa thất bại";
+      toast.error(errorMsg, { id: loadId });
     }
   };
 
@@ -103,7 +127,10 @@ export const OrdersPage = () => {
       {/* SEARCH & FILTER - STYLE GIỐNG PAGE PRODUCT */}
       <div className="bg-white border rounded-3xl p-5 flex gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            size={18}
+          />
           <input
             className="w-full h-12 pl-12 pr-4 bg-slate-50 border rounded-2xl outline-none focus:border-primary transition-all"
             placeholder="Tìm kiếm mã đơn, khách hàng..."
@@ -115,7 +142,10 @@ export const OrdersPage = () => {
         <select
           className="h-12 bg-slate-50 border px-6 rounded-2xl font-bold outline-none cursor-pointer"
           value={statusFilter}
-          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setPage(1);
+          }}
         >
           <option value="">Tất cả trạng thái</option>
           <option value="PENDING">Chờ xử lý</option>
@@ -150,20 +180,38 @@ export const OrdersPage = () => {
                 <tr key={order.id} className="border-t hover:bg-slate-50">
                   <td className="p-4 font-bold text-primary">#{order.id}</td>
                   <td className="p-4">
-                    <div className="font-bold text-slate-900 uppercase text-sm">{order.customerName}</div>
-                    <div className="text-xs text-slate-500">{order.customerEmail}</div>
+                    <div className="font-bold text-slate-900 uppercase text-sm">
+                      {order.customerName}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {order.customerEmail}
+                    </div>
                   </td>
                   <td className="p-4 text-right font-bold text-slate-900">
                     {Number(order.total).toLocaleString()} ₫
                   </td>
-                  <td className="p-4 text-center"><PaymentBadge status={order.paymentStatus} /></td>
-                  <td className="p-4 text-center"><ShippingBadge status={order.shippingStatus} /></td>
+                  <td className="p-4 text-center">
+                    <PaymentBadge status={order.paymentStatus} />
+                  </td>
+                  <td className="p-4 text-center">
+                    <ShippingBadge status={order.shippingStatus} />
+                  </td>
                   <td className="p-4 text-right">
-                    <button 
-                      onClick={() => { setSelectedOrder(order); setShowDrawer(true); }} 
+                    <button
+                      onClick={() => {
+                        setSelectedOrder(order);
+                        setShowDrawer(true);
+                      }}
                       className="p-2 text-slate-600 hover:text-primary transition-all"
                     >
                       <Edit3 size={20} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteOrder(order.id)}
+                      className="p-2 text-slate-400 text-red-500 transition-all hover:bg-red-50 rounded-xl"
+                      title="Xóa đơn hàng"
+                    >
+                      <Trash2 size={18} />
                     </button>
                   </td>
                 </tr>
@@ -199,20 +247,35 @@ export const OrdersPage = () => {
       {/* DRAWER - STYLE GIỐNG PAGE PRODUCT */}
       {showDrawer && selectedOrder && (
         <>
-          <div className="fixed inset-0 bg-black/40 z-50" onClick={() => setShowDrawer(false)} />
+          <div
+            className="fixed inset-0 bg-black/40 z-50"
+            onClick={() => setShowDrawer(false)}
+          />
           <div className="fixed inset-y-0 right-0 w-full md:w-[500px] bg-white z-50 flex flex-col shadow-xl">
             <div className="p-6 border-b flex justify-between items-center">
-              <h2 className="font-black uppercase text-lg">Cập nhật đơn hàng #{selectedOrder.id}</h2>
-              <X className="cursor-pointer" onClick={() => setShowDrawer(false)} />
+              <h2 className="font-black uppercase text-lg">
+                Cập nhật đơn hàng #{selectedOrder.id}
+              </h2>
+              <X
+                className="cursor-pointer"
+                onClick={() => setShowDrawer(false)}
+              />
             </div>
-            
+
             <div className="p-6 space-y-8 overflow-y-auto">
               <div className="space-y-4">
-                <label className="font-bold text-sm block mb-1 uppercase text-slate-400">Trạng thái thanh toán</label>
-                <select 
+                <label className="font-bold text-sm block mb-1 uppercase text-slate-400">
+                  Trạng thái thanh toán
+                </label>
+                <select
                   className="w-full border p-3 rounded-xl font-bold outline-none focus:border-primary"
                   value={selectedOrder.paymentStatus}
-                  onChange={(e) => setSelectedOrder({...selectedOrder, paymentStatus: e.target.value})}
+                  onChange={(e) =>
+                    setSelectedOrder({
+                      ...selectedOrder,
+                      paymentStatus: e.target.value,
+                    })
+                  }
                 >
                   <option value="PENDING">CHỜ THANH TOÁN</option>
                   <option value="PAID">ĐÃ THANH TOÁN</option>
@@ -221,11 +284,18 @@ export const OrdersPage = () => {
               </div>
 
               <div className="space-y-4">
-                <label className="font-bold text-sm block mb-1 uppercase text-slate-400">Trạng thái vận chuyển</label>
-                <select 
+                <label className="font-bold text-sm block mb-1 uppercase text-slate-400">
+                  Trạng thái vận chuyển
+                </label>
+                <select
                   className="w-full border p-3 rounded-xl font-bold outline-none focus:border-primary"
                   value={selectedOrder.shippingStatus}
-                  onChange={(e) => setSelectedOrder({...selectedOrder, shippingStatus: e.target.value})}
+                  onChange={(e) =>
+                    setSelectedOrder({
+                      ...selectedOrder,
+                      shippingStatus: e.target.value,
+                    })
+                  }
                 >
                   <option value="PENDING">CHỜ XỬ LÝ</option>
                   <option value="SHIPPING">ĐANG GIAO HÀNG</option>
@@ -235,22 +305,26 @@ export const OrdersPage = () => {
               </div>
 
               <div className="p-6 bg-slate-50 border rounded-2xl">
-                 <p className="text-xs font-bold text-slate-500 uppercase mb-2">Ghi chú hệ thống</p>
-                 <p className="text-xs text-slate-600 leading-relaxed">
-                   Hành động này sẽ thay đổi trạng thái hiển thị trên tài khoản khách hàng. Hãy đảm bảo thông tin thanh toán đã chính xác trước khi chuyển sang "Đã thanh toán".
-                 </p>
+                <p className="text-xs font-bold text-slate-500 uppercase mb-2">
+                  Ghi chú hệ thống
+                </p>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Hành động này sẽ thay đổi trạng thái hiển thị trên tài khoản
+                  khách hàng. Hãy đảm bảo thông tin thanh toán đã chính xác
+                  trước khi chuyển sang "Đã thanh toán".
+                </p>
               </div>
             </div>
 
             <div className="p-6 border-t flex gap-4 bg-slate-50">
-              <button 
-                onClick={() => setShowDrawer(false)} 
+              <button
+                onClick={() => setShowDrawer(false)}
                 className="flex-1 bg-white border rounded-xl py-3 font-bold hover:bg-slate-50"
               >
                 Hủy
               </button>
-              <button 
-                onClick={handleUpdateStatus} 
+              <button
+                onClick={handleUpdateStatus}
                 className="flex-[2] bg-primary text-white rounded-xl py-3 font-bold hover:bg-primary/90 shadow-lg"
               >
                 Lưu thay đổi

@@ -25,12 +25,12 @@ export const CategoriesPage = () => {
     slug: "",
     description: "",
     imageUrl: "",
-    status: "Hiển thị",
+    status: false,
+
   });
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-
 
   const generateSlug = (name) =>
     name
@@ -43,14 +43,13 @@ export const CategoriesPage = () => {
       .replace(/-+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-
   const fetchCategories = async () => {
     setLoading(true);
     try {
       const res = await baseAPI.get("/admin/categories", {
         params: { search, status: filterStatus },
       });
-      console.log("categories", res.data)
+      console.log("categories", res.data);
       setCategories(res.data);
     } catch {
       toast.error("Không thể tải danh mục");
@@ -63,7 +62,6 @@ export const CategoriesPage = () => {
     fetchCategories();
   }, [filterStatus]);
 
-
   const handleOpenDrawer = (mode, category = null) => {
     setEditMode(mode);
     setSelectedCategory(
@@ -72,7 +70,7 @@ export const CategoriesPage = () => {
         slug: "",
         description: "",
         imageUrl: "",
-        status: "Hiển thị",
+        status: false,
       }
     );
     setShowDrawer(true);
@@ -88,7 +86,7 @@ export const CategoriesPage = () => {
       slug: selectedCategory.slug,
       description: selectedCategory.description,
       image_url: selectedCategory.imageUrl,
-      is_active: selectedCategory.status === "Hiển thị",
+      is_active: selectedCategory.status,
     };
 
     const loadingToast = toast.loading("Đang lưu...");
@@ -109,18 +107,6 @@ export const CategoriesPage = () => {
       toast.error(err.response?.data?.detail || "Có lỗi", {
         id: loadingToast,
       });
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Xóa danh mục này?")) return;
-    const loadingToast = toast.loading("Đang xóa...");
-    try {
-      await baseAPI.delete(`/admin/categories/${id}`);
-      toast.success("Đã xóa", { id: loadingToast });
-      fetchCategories();
-    } catch {
-      toast.error("Xóa thất bại", { id: loadingToast });
     }
   };
 
@@ -150,7 +136,7 @@ export const CategoriesPage = () => {
     }
   };
 
-    console.log("category ", selectedCategory.imageUrl)
+  console.log("category ", selectedCategory.imageUrl);
 
   return (
     <div className="flex flex-col gap-8">
@@ -169,7 +155,10 @@ export const CategoriesPage = () => {
 
       <div className="bg-white border rounded-2xl p-5 flex gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2" size={18} />
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2"
+            size={18}
+          />
           <input
             className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border rounded-xl"
             placeholder="Tìm kiếm..."
@@ -229,12 +218,12 @@ export const CategoriesPage = () => {
                   <td className="p-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        c.status === "Hiển thị"
+                        c.status
                           ? "bg-green-100 text-green-600"
                           : "bg-slate-100 text-slate-500"
                       }`}
                     >
-                      {c.status}
+                      {c.status?"Hiển thị":"Đang ẩn"}
                     </span>
                   </td>
                   <td className="p-4 text-right">
@@ -244,12 +233,7 @@ export const CategoriesPage = () => {
                     >
                       <Edit3 />
                     </button>
-                    <button
-                      onClick={() => handleDelete(c.id)}
-                      className="p-2 text-red-500"
-                    >
-                      <Trash2 />
-                    </button>
+                    
                   </td>
                 </tr>
               ))
@@ -296,8 +280,7 @@ export const CategoriesPage = () => {
                   type="file"
                   accept="image/*"
                   onChange={(e) =>
-                    e.target.files[0] &&
-                    uploadCategoryImage(e.target.files[0])
+                    e.target.files[0] && uploadCategoryImage(e.target.files[0])
                   }
                 />
               </div>
@@ -316,7 +299,10 @@ export const CategoriesPage = () => {
               />
 
               <div className="relative">
-                <Globe className="absolute left-3 top-1/2 -translate-y-1/2" size={16} />
+                <Globe
+                  className="absolute left-3 top-1/2 -translate-y-1/2"
+                  size={16}
+                />
                 <input
                   className="w-full pl-10 border p-3 rounded-xl font-mono text-sm"
                   value={selectedCategory.slug}
@@ -324,7 +310,31 @@ export const CategoriesPage = () => {
                 />
               </div>
             </div>
-
+            {/* Thêm phần này vào bên trong <div className="p-6 space-y-6 overflow-y-auto">, ví dụ sau ô nhập Slug */}
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <div>
+                <p className="font-black text-sm uppercase">
+                  Trạng thái hiển thị
+                </p>
+                <p className="text-xs text-slate-500">
+                  Cho phép danh mục xuất hiện trên cửa hàng
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={selectedCategory.status}
+                  onChange={(e) =>
+                    setSelectedCategory({
+                      ...selectedCategory,
+                      status: e.target.checked,
+                    })
+                  }
+                />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </div>
             <div className="p-6 border-t flex gap-4">
               <button
                 onClick={() => setShowDrawer(false)}

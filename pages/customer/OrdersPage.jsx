@@ -1,37 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import baseAPI from "../api/baseApi";
 import {
   Loader2,
   Package,
-  ChevronRight,
   Info,
   X,
   CheckCircle2,
   Clock,
   Truck,
-  XCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { untils } from "../../languages/untils";
-import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "./components/checkout/CheckoutForm";
-import { loadStripe } from "@stripe/stripe-js";
 
 const OrdersPage = () => {
-
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("ALL");
-
   const [showDetail, setShowDetail] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const [clientSecret, setClientSecret] = useState(null);
-  const [showStripeModal, setShowStripeModal] = useState(false);
-
-
-  const stripePromise = loadStripe("pk_test_51P5IjLP1PtyodjX47SnvBY3JoM9TeTPxLhuM8gmzWXCT8zGei2uAIg9dj3Jl01FAPtVmGgHNLMAzYv92dmEa7y5O00Icax3DvC");
   const tabs = [
     { key: "ALL", label: untils.mess("ordersPage.tabs.all") },
     { key: "PENDING", label: untils.mess("ordersPage.tabs.pending") },
@@ -44,7 +31,6 @@ const OrdersPage = () => {
     try {
       setLoading(true);
       const res = await baseAPI.get("/orders");
-      console.log("order", res.data);
       setOrders(res.data);
     } catch (error) {
       toast.error(untils.mess("ordersPage.error_load"));
@@ -72,25 +58,6 @@ const OrdersPage = () => {
     setShowDetail(true);
   };
 
-  const handlePayment = async(orderId) => {
-    // console.log("payment");
-    try {
-      const orderToPay = orders.find(o => o.id === orderId);
-      setSelectedOrder(orderToPay);
-      toast.loading(untils.mess("ordersPage.conectingPaymentGateway"));
-      const res = await baseAPI.post(`/payment/intents/${orderId}`);
-      setClientSecret(res.data.client_secret);
-      setShowStripeModal(true);
-      // console.log("Secret nhận được:", res.data.client_secret);
-      toast.dismiss();
-
-    } catch (error) {
-      toast.error("Lỗi: " + error.response?.data?.detail);
-    }
-
-  };
-
-  // Helper function để lấy label trạng thái
   const getStatusLabel = (status) => {
     switch (status) {
       case "PENDING":
@@ -183,13 +150,13 @@ const OrdersPage = () => {
                         {untils.mess("ordersPage.status.unpaid")}
                       </span>
                     )}
+                    <span className="text-xs font-medium text-slate-400 ml-2">
+                        {new Date(order.created_at).toLocaleDateString("vi-VN")}
+                    </span>
                   </div>
-                  <span className="text-xs font-medium text-slate-400">
-                    {new Date(order.created_at).toLocaleDateString("vi-VN")}
-                  </span>
                 </div>
 
-                {/* Danh sách sản phẩm rút gọn */}
+                {/* Nội dung sản phẩm */}
                 <div className="space-y-4">
                   {order.items?.slice(0, 1).map((item, idx) => (
                     <div key={idx} className="flex gap-4 items-center">
@@ -206,8 +173,7 @@ const OrdersPage = () => {
                         </h4>
                         <div className="flex justify-between items-center mt-2">
                           <span className="text-xs font-medium text-slate-400">
-                            {untils.mess("ordersPage.card.quantity")}: x
-                            {item.quantity}
+                            {untils.mess("ordersPage.card.quantity")}: x{item.quantity}
                           </span>
                           <span className="font-bold text-slate-900">
                             {formatCurrency(item.price_at_purchase)}
@@ -236,20 +202,10 @@ const OrdersPage = () => {
                     </span>
                   </div>
                   <div className="flex gap-3 w-full md:w-auto">
-                    {order.payment_status !== "PAID" &&
-                      order.shipping_status !== "CANCELLED" && (
-                        <button
-                          onClick={() => handlePayment(order.id)}
-                          className="flex-1 md:flex-none px-6 py-3 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2"
-                        >
-                          <Truck size={16} />{" "}
-                          {untils.mess("ordersPage.btn_pay_now")}
-                        </button>
-                      )}
-
+                    {/* Nút thanh toán đã được gỡ bỏ vì logic chuyển sang Cart */}
                     <button
                       onClick={() => handleOpenDetail(order)}
-                      className="flex-1 md:flex-none px-6 py-3 rounded-xl bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+                      className="w-full md:w-auto px-10 py-3 rounded-xl bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
                     >
                       <Info size={16} />{" "}
                       {untils.mess("ordersPage.card.btn_detail")}
@@ -262,6 +218,7 @@ const OrdersPage = () => {
         </div>
       </div>
 
+      {/* Modal chi tiết đơn hàng */}
       {showDetail && selectedOrder && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div
@@ -275,8 +232,7 @@ const OrdersPage = () => {
                   {untils.mess("ordersPage.detail_popup.title")}
                 </h2>
                 <p className="text-xs font-medium text-slate-400 mt-1">
-                  {untils.mess("ordersPage.detail_popup.order_id")}: #
-                  {selectedOrder.id}
+                  {untils.mess("ordersPage.detail_popup.order_id")}: #{selectedOrder.id}
                 </p>
               </div>
               <button
@@ -305,11 +261,8 @@ const OrdersPage = () => {
                       </h4>
                       <p className="text-[11px] font-medium text-slate-500 mt-1">
                         {untils.mess("ordersPage.detail_popup.variant")}:{" "}
-                        {item.selected_size ||
-                          untils.mess("ordersPage.detail_popup.default")}{" "}
-                        /{" "}
-                        {item.selected_color ||
-                          untils.mess("ordersPage.detail_popup.default")}
+                        {item.selected_size || untils.mess("ordersPage.detail_popup.default")} /{" "}
+                        {item.selected_color || untils.mess("ordersPage.detail_popup.default")}
                       </p>
                       <div className="flex justify-between items-center mt-2">
                         <span className="font-bold text-primary text-sm">
@@ -334,9 +287,7 @@ const OrdersPage = () => {
                   <span>{untils.mess("ordersPage.detail_popup.free")}</span>
                 </div>
                 <div className="pt-3 border-t border-white/10 flex justify-between items-center">
-                  <span className="font-bold">
-                    {untils.mess("ordersPage.detail_popup.total")}
-                  </span>
+                  <span className="font-bold">{untils.mess("ordersPage.detail_popup.total")}</span>
                   <span className="text-xl font-bold text-primary">
                     {formatCurrency(selectedOrder.total_amount)}
                   </span>
@@ -344,7 +295,6 @@ const OrdersPage = () => {
               </div>
             </div>
 
-            {/* Footer Popup */}
             <div className="p-6 bg-slate-50">
               <button
                 onClick={() => setShowDetail(false)}
@@ -353,25 +303,6 @@ const OrdersPage = () => {
                 {untils.mess("ordersPage.detail_popup.btn_close")}
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {showStripeModal && clientSecret && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white p-8 rounded-3xl w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">{untils.mess("ordersPage.paywithcard")}</h2>
-            <Elements stripe={stripePromise} options={{ clientSecret }}>
-              <CheckoutForm 
-                clientSecret={clientSecret} 
-                orderId={selectedOrder?.id}
-                onOrderPaid={() => {
-                  setShowStripeModal(false);
-                  fetchOrders(); 
-                }} 
-              />
-            </Elements>
-            <button onClick={() => setShowStripeModal(false)} className="mt-4 text-slate-400 w-full text-center">{untils.mess("ordersPage.detail_popup.btn_close")}</button>
           </div>
         </div>
       )}
