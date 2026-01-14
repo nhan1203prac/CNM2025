@@ -47,6 +47,10 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const clearCart = () => {
+    setCart([]); 
+};
+
   const subtotal = useMemo(() => {
     return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }, [cart]);
@@ -63,6 +67,7 @@ export const CartProvider = ({ children }) => {
         addToCart, 
         removeFromCart, 
         fetchCart, 
+        clearCart,
         subtotal, 
         totalItems 
       }}
