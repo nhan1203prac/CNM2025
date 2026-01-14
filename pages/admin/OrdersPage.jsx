@@ -35,9 +35,10 @@ const PaymentBadge = ({ status }) => {
 };
 
 const ShippingBadge = ({ status }) => {
-  if (!status) return null;
+  if (!status) return null; 
   const config = {
     PENDING: { color: "bg-slate-100 text-slate-700", text: "Chờ xử lý" },
+    CONFIRMED: { color: "bg-slate-100 text-slate-700", text: "Đã xác nhận" },
     SHIPPING: { color: "bg-blue-100 text-blue-700", text: "Đang giao" },
     DELIVERED: { color: "bg-green-100 text-green-700", text: "Đã giao" },
     CANCELLED: { color: "bg-red-100 text-red-700", text: "Đã hủy" },
@@ -71,6 +72,8 @@ export const OrdersPage = () => {
       setOrders(response.data.items);
       setTotalPages(response.data.pages);
       setTotalItems(response.data.total);
+
+      console.log("order admin", response.data)
     } catch (error) {
       toast.error("Lỗi đồng bộ dữ liệu");
     } finally {
@@ -149,6 +152,7 @@ export const OrdersPage = () => {
         >
           <option value="">Tất cả trạng thái</option>
           <option value="PENDING">Chờ xử lý</option>
+          <option value="CONFIRMED">Đã xác nhận</option>
           <option value="SHIPPING">Đang giao</option>
           <option value="DELIVERED">Đã giao</option>
           <option value="CANCELLED">Đã hủy</option>
@@ -278,6 +282,7 @@ export const OrdersPage = () => {
                   }
                 >
                   <option value="PENDING">CHỜ THANH TOÁN</option>
+                  
                   <option value="PAID">ĐÃ THANH TOÁN</option>
                   <option value="REFUNDED">ĐÃ HOÀN TIỀN</option>
                 </select>
@@ -298,6 +303,7 @@ export const OrdersPage = () => {
                   }
                 >
                   <option value="PENDING">CHỜ XỬ LÝ</option>
+                  <option value="CONFIRMED">ĐÃ XÁC NHẬN</option>
                   <option value="SHIPPING">ĐANG GIAO HÀNG</option>
                   <option value="DELIVERED">ĐÃ GIAO THÀNH CÔNG</option>
                   <option value="CANCELLED">HỦY ĐƠN HÀNG</option>
