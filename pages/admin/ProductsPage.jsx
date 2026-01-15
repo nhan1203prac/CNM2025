@@ -4,7 +4,6 @@ import { Edit3, Trash2, Search, Plus, X, Camera, Loader2, ImagePlus } from "luci
 import toast from "react-hot-toast";
 
 export const ProductsPage = () => {
-  // --- STATE QUẢN LÝ DỮ LIỆU ---
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -221,15 +220,15 @@ export const ProductsPage = () => {
           <div className="absolute inset-0" onClick={() => setShowDrawer(false)} />
           <div className="relative w-full md:w-[500px] bg-white h-full flex flex-col   animate-in slide-in-from-right duration-200">
             <div className="p-5 border-b-2 border-black flex justify-between items-center bg-gray-50">
-              <h2 className="font-bold uppercase text-base">{editMode === "create" ? "Thêm mới sản phẩm" : "Cập nhật sản phẩm"}</h2>
+              <h2 className="font-bold uppercase">{editMode === "create" ? "Thêm mới sản phẩm" : "Cập nhật sản phẩm"}</h2>
               <X className="cursor-pointer text-black" size={24} onClick={() => setShowDrawer(false)} />
             </div>
 
             <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-black/5">
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2">
                 <div>
-                  <p className="font-black text-sm uppercase">Kích hoạt hiển thị</p>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase">Bật để khách hàng có thể thấy sản phẩm này</p>
+                  <p className="text-sm uppercase font-bold">Kích hoạt hiển thị</p>
+                  <p className="text-[10px]  font-bold uppercase">Bật để khách hàng có thể thấy sản phẩm này</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
@@ -241,23 +240,21 @@ export const ProductsPage = () => {
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
-              {/* IMAGE SECTION - TÁCH BIỆT MAIN VÀ SUB */}
               <div className="space-y-6">
-                {/* ẢNH CHÍNH */}
                 <div className="space-y-2">
-                  <label className="text-sm font-black uppercase text-black">Ảnh đại diện (Main Image)</label>
+                  <label className="text-sm font-black uppercase">Ảnh đại diện (Main Image)</label>
                   <div className="flex items-center gap-4">
                     <div className="w-24 h-24 border-2 flex items-center justify-center bg-gray-50 relative group rounded-xl overflow-hidden">
                       {selectedProduct.main_image ? <img src={selectedProduct.main_image} className="w-full h-full object-cover" /> : <Camera className="text-gray-400" size={32} />}
                       <button onClick={() => mainImageInputRef.current.click()} className="absolute inset-0 bg-black/60 text-white opacity-0 group-hover:opacity-100 text-xs font-bold uppercase">Sửa</button>
                     </div>
-                    <p className="text-xs text-gray-500 font-bold uppercase">Đây là ảnh hiển thị chính của sản phẩm</p>
+                    <p className="text-xs  font-bold uppercase">Đây là ảnh hiển thị chính của sản phẩm</p>
                   </div>
                 </div>
 
                 {/* ẢNH PHỤ */}
                 <div className="space-y-2">
-                  <label className="text-sm font-black uppercase text-black">Ảnh chi tiết phụ (Sub Images)</label>
+                  <label className="text-sm  uppercase text-black">Ảnh chi tiết phụ (Sub Images)</label>
                   <div className="flex flex-wrap gap-2">
                     {selectedProduct.images.map((img, i) => (
                       <div key={i} className="w-24 h-24 border-2 border-gray-200 relative group rounded-xl overflow-hidden">
@@ -276,47 +273,47 @@ export const ProductsPage = () => {
               {/* FORM FIELDS */}
               <div className="space-y-6 pt-4 border-t-2 border-gray-100">
                 <div className="space-y-2">
-                  <label className="text-sm font-black uppercase text-black">Tên sản phẩm</label>
-                  <input className="w-full border-2 border-gray-300 h-12 px-4 text-base outline-none  uppercase" value={selectedProduct.name} onChange={e => setSelectedProduct({...selectedProduct, name: e.target.value})} />
+                  <label className="text-sm uppercase text-black">Tên sản phẩm</label>
+                  <input className="w-full border-2 border-gray-300 h-12 px-4  outline-none  uppercase" value={selectedProduct.name} onChange={e => setSelectedProduct({...selectedProduct, name: e.target.value})} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-black uppercase text-black">Giá bán (đ)</label>
-                    <input type="number" className="w-full border-2 border-gray-300 h-12 px-4 text-base  outline-none " value={selectedProduct.price} onChange={e => setSelectedProduct({...selectedProduct, price: e.target.value})} />
+                    <label className="text-sm  uppercase text-black">Giá bán (đ)</label>
+                    <input type="number" className="w-full border-2 border-gray-300 h-12 px-4   outline-none " value={selectedProduct.price} onChange={e => setSelectedProduct({...selectedProduct, price: e.target.value})} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-black uppercase text-black">Số lượng kho</label>
-                    <input type="number" className="w-full border-2 border-gray-300 h-12 px-4 text-base  outline-none " value={selectedProduct.stock} onChange={e => setSelectedProduct({...selectedProduct, stock: e.target.value})} />
+                    <label className="text-sm  uppercase text-black">Số lượng kho</label>
+                    <input type="number" className="w-full border-2 border-gray-300 h-12 px-4  outline-none " value={selectedProduct.stock} onChange={e => setSelectedProduct({...selectedProduct, stock: e.target.value})} />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-black uppercase text-black">Danh mục</label>
-                  <select className="w-full border-2 border-gray-300 h-12 px-4 text-base  outline-none uppercase cursor-pointer" value={selectedProduct.category_id} onChange={e => setSelectedProduct({...selectedProduct, category_id: e.target.value})}>
+                  <select className="w-full border-2 border-gray-300 h-12 px-4   outline-none uppercase cursor-pointer" value={selectedProduct.category_id} onChange={e => setSelectedProduct({...selectedProduct, category_id: e.target.value})}>
                     <option value="">Chọn loại</option>
                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-black uppercase text-black">Mô tả sản phẩm</label>
-                  <textarea className="w-full border-2 border-gray-300 p-4 text-base font-medium outline-none  min-h-[120px]" value={selectedProduct.description} onChange={e => setSelectedProduct({...selectedProduct, description: e.target.value})} />
+                  <label className="text-sm  uppercase text-black">Mô tả sản phẩm</label>
+                  <textarea className="w-full border-2 border-gray-300 p-4  font-medium outline-none  min-h-[120px]" value={selectedProduct.description} onChange={e => setSelectedProduct({...selectedProduct, description: e.target.value})} />
                 </div>
               </div>
 
               {/* VARIANTS */}
               <div className="space-y-6 pt-6 border-black bg-gray-50 p-4 rounded-xl">
-                <p className="text-sm font-black uppercase text-black">Đặc điểm</p>
+                <p className="text-sm  uppercase text-black">Đặc điểm</p>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-black uppercase text-black">Màu sắc</label>
+                    <label className="text-sm  uppercase text-black">Màu sắc</label>
                     <input className="w-full border-2 border-gray-300 h-12 px-4 text-sm  outline-none " placeholder="Đen, Trắng..." value={inputStrings.colors} onChange={e => handleTyping("colors", e.target.value)} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-black uppercase text-black">Dung lượng</label>
+                      <label className="text-sm  uppercase text-black">Dung lượng</label>
                       <input className="w-full border-2 border-gray-300 h-12 px-4 text-sm  outline-none " placeholder="128GB, 256GB..." value={inputStrings.storages} onChange={e => handleTyping("storages", e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-black uppercase text-black">Kích cỡ</label>
+                      <label className="text-sm  uppercase text-black">Kích cỡ</label>
                       <input className="w-full border-2 border-gray-300 h-12 px-4 text-sm  outline-none " placeholder="S, M, L..." value={inputStrings.sizes} onChange={e => handleTyping("sizes", e.target.value)} />
                     </div>
                   </div>
