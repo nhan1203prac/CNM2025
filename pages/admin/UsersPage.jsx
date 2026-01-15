@@ -114,16 +114,22 @@ export const UsersPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Xác nhận xóa tài khoản này?")) return;
-    try {
-      await baseAPI.delete(`/admin/users/${id}`);
-      toast.success("Đã xóa");
-      fetchUsers();
-    } catch (error) {
-      toast.error("Không thể xóa");
-    }
-  };
+  // Component phụ trợ cho Switch
+  const ToggleSwitch = ({ id, checked, onChange, label }) => (
+    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+      <span className="font-bold text-sm text-slate-700">{label}</span>
+      <label htmlFor={id} className="relative inline-flex items-center cursor-pointer">
+        <input 
+          type="checkbox" 
+          id={id} 
+          className="sr-only peer" 
+          checked={checked}
+          onChange={onChange}
+        />
+        <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+      </label>
+    </div>
+  );
 
   return (
     <div className="flex flex-col gap-8 p-6">
@@ -208,9 +214,6 @@ export const UsersPage = () => {
                 <td className="p-4 text-right">
                   <button onClick={() => handleOpenDrawer('edit', user)} className="p-2 text-slate-600 hover:text-primary">
                     <Edit3 size={20} />
-                  </button>
-                  <button onClick={() => handleDelete(user.id)} className="p-2 text-red-500">
-                    <Trash2 size={20} />
                   </button>
                 </td>
               </tr>
@@ -299,24 +302,21 @@ export const UsersPage = () => {
                   />
                 </div>
 
-                {/* TOGGLES */}
-                <div className="grid grid-cols-2 gap-4 pt-2">
-                  <div className="flex items-center gap-2">
-                    <input 
-                      type="checkbox" id="isAdmin" className="w-5 h-5"
-                      checked={selectedUser.isAdmin}
-                      onChange={(e) => setSelectedUser({...selectedUser, isAdmin: e.target.checked})}
-                    />
-                    <label htmlFor="isAdmin" className="font-bold text-sm cursor-pointer">Quyền Admin</label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input 
-                      type="checkbox" id="isActive" className="w-5 h-5"
-                      checked={selectedUser.is_active}
-                      onChange={(e) => setSelectedUser({...selectedUser, is_active: e.target.checked})}
-                    />
-                    <label htmlFor="isActive" className="font-bold text-sm cursor-pointer">Đang hoạt động</label>
-                  </div>
+                {/* SWITCHES - PHẦN THAY ĐỔI Ở ĐÂY */}
+                <div className="grid grid-cols-1 gap-3 pt-2">
+                  <ToggleSwitch 
+                    id="isAdmin"
+                    label="Quyền Quản trị viên"
+                    checked={selectedUser.isAdmin}
+                    onChange={(e) => setSelectedUser({...selectedUser, isAdmin: e.target.checked})}
+                  />
+                  
+                  <ToggleSwitch 
+                    id="isActive"
+                    label="Trạng thái Hoạt động"
+                    checked={selectedUser.is_active}
+                    onChange={(e) => setSelectedUser({...selectedUser, is_active: e.target.checked})}
+                  />
                 </div>
               </div>
             </div>
