@@ -37,6 +37,8 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  console.log(user);
+
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
 
